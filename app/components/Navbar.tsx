@@ -32,53 +32,27 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ${
         scrolled
           ? "bg-white shadow-md"
           : "bg-gradient-to-b from-black/70 to-transparent"
       }`}
     >
-      <nav
-        className={`mx-auto flex max-w-7xl items-center justify-between px-6 lg:px-10 transition-all duration-500 ${
-          scrolled ? "h-16" : "h-22"
-        }`}
-      >
+      <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
         <Link href="/" className="group" aria-label="JKA Berlin - Startseite">
-          <span className="relative inline-flex items-center justify-center">
-            {/* Colored logo on white chip - at top */}
-            <span
-              className={`inline-flex items-center justify-center bg-white rounded-lg px-4 py-2.5 shadow-md transition-all duration-500 group-hover:scale-105 ${
-                scrolled
-                  ? "opacity-0 scale-90 pointer-events-none absolute"
-                  : "opacity-100 scale-100"
-              }`}
-            >
-              <Image
-                src="/jka-berlin-logo.png"
-                alt="JKA Berlin"
-                width={200}
-                height={92}
-                className="h-14 w-auto"
-                priority
-              />
-            </span>
-            {/* Colored logo direct - when scrolled on white bg */}
-            <span
-              className={`inline-flex items-center justify-center transition-all duration-500 group-hover:scale-105 ${
-                scrolled
-                  ? "opacity-100 scale-100"
-                  : "opacity-0 scale-110 pointer-events-none absolute"
-              }`}
-            >
-              <Image
-                src="/jka-berlin-logo.png"
-                alt="JKA Berlin"
-                width={200}
-                height={92}
-                className="h-10 w-auto"
-                priority
-              />
-            </span>
+          <span
+            className={`inline-flex items-center justify-center transition-all duration-500 group-hover:scale-105 ${
+              scrolled ? "" : "bg-white rounded-lg px-4 py-2.5 shadow-md"
+            }`}
+          >
+            <Image
+              src="/jka-berlin-logo.png"
+              alt="JKA Berlin"
+              width={200}
+              height={92}
+              className="h-12 w-auto"
+              priority
+            />
           </span>
         </Link>
 

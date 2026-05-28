@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type FilterKey = 'Alle' | 'Allgemeine' | 'Technisches' | 'Prüfungen' | 'Videos';
+type FilterKey = 'Alle' | 'Lehrgang' | 'Allgemeine' | 'Technisches' | 'Prüfungen' | 'Videos';
 
 type DownloadEntry = {
   id: string;
   title: string;
-  category: 'Allgemeine' | 'Technisches' | 'Prüfungen' | '';
+  category: 'Lehrgang' | 'Allgemeine' | 'Technisches' | 'Prüfungen' | '';
   updatedAt: string;
   file: string;
   initialCount: number;
@@ -22,13 +22,13 @@ type VideoEntry = {
   vol: number;
 };
 
-// ─── Data (TODO: replace with Sanity CMS query) ───────────────────────────────
+// ─── Data ───────────────────────────────────────────────────────────────────
 
 const downloads: DownloadEntry[] = [
   {
     id: 'brandenburger-sommerlager',
     title: 'Brandenburger Sommerlager',
-    category: '',
+    category: 'Lehrgang',
     updatedAt: '24. April 2026',
     file: '2026_JKA_brandenburger_sommerlager.pdf',
     initialCount: 7,
@@ -36,7 +36,7 @@ const downloads: DownloadEntry[] = [
   {
     id: 'spring-camp-2026',
     title: 'Spring Camp 2026',
-    category: 'Allgemeine',
+    category: 'Lehrgang',
     updatedAt: '16. Februar 2026',
     file: '2026_JKA_Springcamp_Ohta_info.pdf',
     initialCount: 92,
@@ -146,17 +146,59 @@ const videos: VideoEntry[] = [
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const FILTERS: FilterKey[] = ['Alle', 'Allgemeine', 'Technisches', 'Prüfungen', 'Videos'];
+const FILTERS: FilterKey[] = ['Alle', 'Lehrgang', 'Allgemeine', 'Technisches', 'Prüfungen', 'Videos'];
 
-const catStyle: Record<string, { bg: string; text: string }> = {
-  Allgemeine:  { bg: 'bg-zinc-100',  text: 'text-zinc-600' },
-  Technisches: { bg: 'bg-blue-50',   text: 'text-blue-700' },
-  Prüfungen:   { bg: 'bg-red-50',    text: 'text-red-600'  },
-};
+function getFileType(filename: string): 'pdf' | 'excel' | 'file' {
+  const ext = filename.split('.').pop()?.toLowerCase() ?? '';
+  if (ext === 'pdf') return 'pdf';
+  if (['xlsx', 'xls', 'csv'].includes(ext)) return 'excel';
+  return 'file';
+}
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
-function IconDownload() {
+function IconPdf() {
+  return (
+    <svg className="h-9 w-9" viewBox="0 0 32 32" fill="none">
+      <path d="M6 2h14l6 6v20a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" fill="#e5e7eb" stroke="#d1d5db" strokeWidth="0.5" />
+      <path d="M20 2v6h6" fill="#f3f4f6" stroke="#d1d5db" strokeWidth="0.5" />
+      <rect x="3" y="14" width="18" height="10" rx="1.5" fill="#dc2626" />
+      <path d="M7.2 21v-5h1.9c.5 0 .9.1 1.2.4.3.3.4.6.4 1s-.1.8-.4 1c-.3.3-.7.4-1.2.4H8.3V21h-1zm1.1-3.2h.7c.2 0 .4 0 .5-.2.1-.1.2-.2.2-.4s-.1-.3-.2-.4c-.1-.1-.3-.2-.5-.2h-.7v1.2zm3.2 3.2v-5h1.7c.7 0 1.3.2 1.7.7.4.4.6 1 .6 1.8s-.2 1.4-.6 1.8c-.4.5-1 .7-1.7.7h-1.7zm1.1-1h.5c.4 0 .7-.1.9-.4.2-.3.3-.6.3-1.1 0-.5-.1-.8-.3-1.1-.2-.3-.5-.4-.9-.4h-.5v3zm3.6 1v-5H19v1h-1.8v1.2h1.6v.9h-1.6V21h-1z" fill="white" />
+    </svg>
+  );
+}
+
+function IconExcel() {
+  return (
+    <svg className="h-9 w-9" viewBox="0 0 32 32" fill="none">
+      <path d="M6 2h14l6 6v20a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" fill="#e5e7eb" stroke="#d1d5db" strokeWidth="0.5" />
+      <path d="M20 2v6h6" fill="#f3f4f6" stroke="#d1d5db" strokeWidth="0.5" />
+      <rect x="3" y="14" width="18" height="10" rx="1.5" fill="#16a34a" />
+      <path d="M7.5 21l1.4-2.5L7.6 16h1.2l.8 1.6.8-1.6h1.2l-1.4 2.5L11.6 21h-1.2l-.9-1.7-.9 1.7H7.5zm5 0v-5h1v4h2.2v1H12.5zm4.8 0v-5h2.8v.9h-1.8v1.1h1.6v.9h-1.6v1.1h1.8v1h-2.8z" fill="white" />
+    </svg>
+  );
+}
+
+function IconFile() {
+  return (
+    <svg className="h-9 w-9" viewBox="0 0 32 32" fill="none">
+      <path d="M6 2h14l6 6v20a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" fill="#e5e7eb" stroke="#d1d5db" strokeWidth="0.5" />
+      <path d="M20 2v6h6" fill="#f3f4f6" stroke="#d1d5db" strokeWidth="0.5" />
+      <line x1="10" y1="16" x2="22" y2="16" stroke="#d1d5db" strokeWidth="1" />
+      <line x1="10" y1="19" x2="22" y2="19" stroke="#d1d5db" strokeWidth="1" />
+      <line x1="10" y1="22" x2="18" y2="22" stroke="#d1d5db" strokeWidth="1" />
+    </svg>
+  );
+}
+
+function FileIcon({ filename }: { filename: string }) {
+  const type = getFileType(filename);
+  if (type === 'pdf') return <IconPdf />;
+  if (type === 'excel') return <IconExcel />;
+  return <IconFile />;
+}
+
+function IconDownloadSmall() {
   return (
     <svg className="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -184,40 +226,7 @@ function IconExternal() {
 
 function Spinner() {
   return (
-    <span className="h-3.5 w-3.5 shrink-0 border-2 border-white/30 border-t-white rounded-full animate-spin inline-block" />
-  );
-}
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function CategoryBadge({ category }: { category: string }) {
-  const s = catStyle[category];
-  if (!s) return <span className="text-zinc-300 text-sm">—</span>;
-  return (
-    <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${s.bg} ${s.text}`}>
-      {category}
-    </span>
-  );
-}
-
-function DownloadButton({
-  entry,
-  loading,
-  onClick,
-}: {
-  entry: DownloadEntry;
-  loading: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={loading}
-      className="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-bold px-3 py-1.5 rounded transition-colors whitespace-nowrap"
-    >
-      {loading ? <Spinner /> : <IconDownload />}
-      PDF
-    </button>
+    <span className="h-4 w-4 shrink-0 border-2 border-white/30 border-t-white rounded-full animate-spin inline-block" />
   );
 }
 
@@ -250,7 +259,7 @@ export default function DownloadsClient() {
         setCounts((prev) => ({ ...prev, [entry.id]: count }));
       }
     } catch {
-      // count update failed — download proceeds anyway
+      // count update failed
     }
     const a = document.createElement('a');
     a.href = `/downloads/${encodeURIComponent(entry.file)}`;
@@ -291,85 +300,81 @@ export default function DownloadsClient() {
       {/* ── PDF Downloads ── */}
       {showPDFs && filteredDownloads.length > 0 && (
         <div className="mb-14">
-          {/* Desktop table */}
-          <div className="hidden md:block overflow-hidden rounded-xl border border-zinc-200">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-zinc-50 border-b border-zinc-200">
-                  <th className="text-left px-5 py-3 text-[11px] font-bold tracking-[0.12em] uppercase text-zinc-500 w-[40%]">
-                    Titel
-                  </th>
-                  <th className="text-left px-4 py-3 text-[11px] font-bold tracking-[0.12em] uppercase text-zinc-500">
-                    Kategorie
-                  </th>
-                  <th className="text-left px-4 py-3 text-[11px] font-bold tracking-[0.12em] uppercase text-zinc-500">
-                    Aktualisiert
-                  </th>
-                  <th className="text-center px-4 py-3 text-[11px] font-bold tracking-[0.12em] uppercase text-zinc-500">
-                    Downloads
-                  </th>
-                  <th className="px-5 py-3" />
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-100">
-                {filteredDownloads.map((entry) => (
-                  <tr key={entry.id} className="hover:bg-zinc-50 transition-colors group">
-                    <td className="px-5 py-3.5 font-semibold text-zinc-900">
-                      {entry.title}
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <CategoryBadge category={entry.category} />
-                    </td>
-                    <td className="px-4 py-3.5 text-zinc-500 text-sm">
-                      {entry.updatedAt}
-                    </td>
-                    <td className="px-4 py-3.5 text-center">
-                      <span className="font-bold text-zinc-800">
-                        {getCount(entry.id, entry.initialCount)}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-right">
-                      <DownloadButton
-                        entry={entry}
-                        loading={loading === entry.id}
-                        onClick={() => handleDownload(entry)}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {/* Table header (desktop) */}
+          <div className="hidden sm:grid sm:grid-cols-[auto_1fr_7rem_7rem_auto] gap-5 items-center px-1 pb-3 border-b-2 border-zinc-200">
+            <span className="w-9" />
+            <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-zinc-400">Titel</span>
+            <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-zinc-400">Kategorie</span>
+            <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-zinc-400">Aktualisiert</span>
+            <span className="w-[120px]" />
           </div>
 
-          {/* Mobile cards */}
-          <ul className="md:hidden space-y-3">
+          <ul className="divide-y divide-zinc-100">
             {filteredDownloads.map((entry) => (
-              <li
-                key={entry.id}
-                className="border border-zinc-200 rounded-xl p-4 bg-white"
-              >
-                <div className="flex items-start justify-between gap-3 mb-2">
+              <li key={entry.id} className="py-4">
+                {/* Desktop row */}
+                <div className="hidden sm:grid sm:grid-cols-[auto_1fr_7rem_7rem_auto] gap-5 items-center px-1">
+                  <div className="shrink-0">
+                    <FileIcon filename={entry.file} />
+                  </div>
+
                   <div className="min-w-0">
-                    <p className="font-bold text-zinc-900 leading-snug">{entry.title}</p>
-                    <div className="flex items-center gap-2 mt-1 flex-wrap">
-                      {entry.category && (
-                        <CategoryBadge category={entry.category} />
-                      )}
-                      <span className="text-xs text-zinc-500">{entry.updatedAt}</span>
+                    <p className="text-lg font-black text-zinc-900 leading-tight truncate">
+                      {entry.title}
+                    </p>
+                    <div className="flex items-center gap-1 mt-1 text-zinc-400">
+                      <IconDownloadSmall />
+                      <span className="text-xs">
+                        <span className="font-bold text-zinc-500">{getCount(entry.id, entry.initialCount)}</span>
+                        {' '}Downloads
+                      </span>
                     </div>
                   </div>
-                  <DownloadButton
-                    entry={entry}
-                    loading={loading === entry.id}
+
+                  <span className="text-sm text-zinc-400">
+                    {entry.category || '—'}
+                  </span>
+
+                  <span className="text-sm text-zinc-400">
+                    {entry.updatedAt}
+                  </span>
+
+                  <button
                     onClick={() => handleDownload(entry)}
-                  />
+                    disabled={loading === entry.id}
+                    className="w-[120px] inline-flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded border border-zinc-300 text-zinc-900 hover:border-zinc-900 hover:bg-zinc-900 hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {loading === entry.id ? <Spinner /> : <IconDownloadSmall />}
+                    Download
+                  </button>
                 </div>
-                <p className="text-xs text-zinc-500 mt-2">
-                  <span className="font-bold text-zinc-700">
-                    {getCount(entry.id, entry.initialCount)}
-                  </span>{' '}
-                  Downloads
-                </p>
+
+                {/* Mobile row */}
+                <div className="sm:hidden flex items-center gap-4">
+                  <div className="shrink-0">
+                    <FileIcon filename={entry.file} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-base font-black text-zinc-900 leading-tight">
+                      {entry.title}
+                    </p>
+                    <div className="flex items-center gap-3 mt-1 text-xs text-zinc-400">
+                      {entry.category && <span>{entry.category}</span>}
+                      <span>{entry.updatedAt}</span>
+                      <span className="flex items-center gap-1">
+                        <IconDownloadSmall />
+                        <span className="font-bold text-zinc-500">{getCount(entry.id, entry.initialCount)}</span>
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleDownload(entry)}
+                    disabled={loading === entry.id}
+                    className="shrink-0 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded border border-zinc-300 text-zinc-900 hover:border-zinc-900 hover:bg-zinc-900 hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {loading === entry.id ? <Spinner /> : <IconDownloadSmall />}
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

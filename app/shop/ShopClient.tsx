@@ -627,7 +627,7 @@ export default function ShopClient() {
   return (
     <section className="bg-zinc-50 py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="flex flex-col lg:flex-row gap-10 items-start">
+        <div className="flex flex-col lg:flex-row gap-10 lg:items-start">
           {/* ── Products grid ── */}
           <div className="flex-1 min-w-0">
             <div className="grid gap-5 sm:grid-cols-2">

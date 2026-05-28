@@ -19,9 +19,9 @@ export default function PageHero({
         fill
         priority
         sizes="100vw"
-        className="object-cover opacity-50"
+        className="object-cover opacity-70"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/30" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
       <div className="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10 pb-14">
         {eyebrow && (
           <div className="flex items-center gap-3 mb-4">

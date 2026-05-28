@@ -190,8 +190,8 @@ function ListView({ events }: { events: TerminEvent[] }) {
 
         return (
           <li key={i} className="py-4 first:pt-0">
-            {/* Row */}
-            <div className="flex items-center gap-5">
+            {/* Desktop row */}
+            <div className="hidden sm:flex items-center gap-5">
               {/* Date block */}
               <div className="w-32 shrink-0">
                 {isMultiDay ? (
@@ -226,7 +226,7 @@ function ListView({ events }: { events: TerminEvent[] }) {
               </div>
 
               {/* Category */}
-              <span className="hidden sm:block shrink-0 text-sm text-zinc-400 w-28 text-right">
+              <span className="shrink-0 text-sm text-zinc-400 w-28 text-right">
                 {ev.type}
               </span>
 
@@ -241,6 +241,35 @@ function ListView({ events }: { events: TerminEvent[] }) {
               >
                 {isOpen ? "Schliessen" : "Details"}
               </button>
+            </div>
+
+            {/* Mobile stacked layout */}
+            <div className="sm:hidden">
+              <div className="flex items-center gap-2 text-xs font-semibold text-zinc-400">
+                <span className="text-red-600">
+                  {isMultiDay
+                    ? `${formatRangeCompact(ev)} ${monthFull(ev.startDate)}`
+                    : `${dayNum(ev.startDate)}. ${monthFull(ev.startDate)}`}{" "}
+                  {yearStr(ev.startDate)}
+                </span>
+                <span>·</span>
+                <span>{ev.type}</span>
+              </div>
+              <div className="flex items-center gap-3 mt-1">
+                <p className="flex-1 min-w-0 text-lg font-black text-zinc-900 leading-tight">
+                  {ev.title}
+                </p>
+                <button
+                  onClick={() => setExpandedIdx(isOpen ? null : i)}
+                  className={`shrink-0 text-xs font-bold uppercase tracking-wider px-4 py-2 rounded transition-colors ${
+                    isOpen
+                      ? "bg-zinc-900 text-white"
+                      : "text-zinc-900 border border-zinc-300 hover:border-zinc-900"
+                  }`}
+                >
+                  {isOpen ? "Schliessen" : "Details"}
+                </button>
+              </div>
             </div>
 
             {/* Expanded */}

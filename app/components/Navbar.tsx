@@ -38,11 +38,11 @@ export default function Navbar() {
           : "bg-gradient-to-b from-black/70 to-transparent"
       }`}
     >
-      <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
+      <nav className={`mx-auto flex max-w-7xl items-center justify-between px-6 lg:px-10 transition-all duration-500 ${scrolled ? "h-16 lg:h-20" : "h-20 lg:h-28"}`}>
         <Link href="/" className="group" aria-label="JKA Berlin - Startseite">
           <span
             className={`inline-flex items-center justify-center transition-all duration-500 group-hover:scale-105 ${
-              scrolled ? "" : "bg-white rounded-lg px-4 py-2.5 shadow-md"
+              scrolled ? "" : "lg:bg-white lg:rounded-lg lg:px-4 lg:py-2.5 lg:shadow-md"
             }`}
           >
             <Image
@@ -50,7 +50,7 @@ export default function Navbar() {
               alt="JKA Berlin"
               width={200}
               height={92}
-              className="h-12 w-auto"
+              className={`w-auto transition-all duration-500 ${scrolled ? "h-12 lg:h-14" : "h-12 lg:h-24 brightness-0 invert lg:brightness-100 lg:invert-0"}`}
               priority
             />
           </span>

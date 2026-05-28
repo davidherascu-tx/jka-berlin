@@ -34,7 +34,7 @@ export default function RootLayout({
       lang="de"
       className={`${oswald.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-white font-body">
+      <body className="min-h-full flex flex-col bg-white font-body" suppressHydrationWarning>
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />

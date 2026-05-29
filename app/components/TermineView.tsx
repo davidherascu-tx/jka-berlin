@@ -220,7 +220,7 @@ function ListView({ events }: { events: TerminEvent[] }) {
 
               {/* Title */}
               <div className="flex-1 min-w-0">
-                <p className="text-xl font-black text-zinc-900 leading-tight truncate">
+                <p className="text-xl font-black text-zinc-900 leading-tight">
                   {ev.title}
                 </p>
               </div>

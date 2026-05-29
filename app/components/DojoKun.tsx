@@ -1,3 +1,5 @@
+import DojoKunAudio from './DojoKunAudio';
+
 const dojoKun = [
   {
     de: "Vervollkommne Deinen Charakter.",
@@ -50,7 +52,9 @@ export default function DojoKun() {
           Die fünf Leitsätze, die unser Training und unseren Charakter prägen.
         </p>
 
-        <ol className="mt-12 border-t border-white/10">
+        <DojoKunAudio />
+
+        <ol className="mt-8 border-t border-white/10">
           {dojoKun.map((item, i) => (
             <li
               key={i}

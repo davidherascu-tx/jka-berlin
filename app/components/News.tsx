@@ -8,6 +8,8 @@ export default function News() {
   return (
     <section id="news" className="relative bg-zinc-950 py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
+
+        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-14">
           <div>
             <div className="flex items-center gap-3 mb-4">
@@ -29,27 +31,33 @@ export default function News() {
           </Link>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {/* Cards */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
             <article
               key={item.slug}
-              className="group relative flex flex-col overflow-hidden rounded-lg bg-zinc-900 border border-white/5 hover:border-red-600/40 transition-colors"
+              className="group flex flex-col overflow-hidden rounded-xl bg-zinc-900 border border-white/5 hover:border-red-600/50 hover:shadow-xl transition-all duration-300"
             >
-              <Link href={`/news/${item.slug}`} className="relative block aspect-[16/10] overflow-hidden">
+              {/* Full image — object-contain, no crop */}
+              <Link
+                href={`/news/${item.slug}`}
+                className="relative block aspect-[4/3] overflow-hidden bg-zinc-800"
+              >
                 {item.image && (
                   <Image
                     src={item.image}
                     alt={item.title}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="object-contain transition-transform duration-700 group-hover:scale-105"
                   />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-transparent to-transparent" />
-                <span className="absolute top-4 left-4 bg-red-600 text-white text-[11px] font-bold tracking-widest uppercase px-3 py-1">
+                <span className="absolute top-4 left-4 z-10 bg-red-600 text-white text-[11px] font-bold tracking-widest uppercase px-3 py-1">
                   {item.category}
                 </span>
               </Link>
+
+              {/* Text */}
               <div className="flex flex-1 flex-col p-6">
                 <time className="text-xs text-zinc-500 tracking-wider uppercase mb-3">
                   {formatDate(item.date)}
@@ -62,7 +70,7 @@ export default function News() {
                 </p>
                 <Link
                   href={`/news/${item.slug}`}
-                  className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white group-hover:text-red-500 transition-colors"
+                  className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-red-500 transition-colors"
                 >
                   Weiterlesen
                   <span className="transition-transform group-hover:translate-x-1">→</span>
@@ -71,6 +79,7 @@ export default function News() {
             </article>
           ))}
         </div>
+
       </div>
     </section>
   );

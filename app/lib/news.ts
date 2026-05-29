@@ -1,14 +1,16 @@
+// TODO: Replace with Sanity CMS query once integrated
+// e.g.: export async function getNews(): Promise<NewsItem[]> { return sanityClient.fetch(groq`*[_type=="news"]|order(date desc)`) }
+
 export type NewsItem = {
   slug: string;
   title: string;
   excerpt: string;
   category: string;
-  date: string;
-  image?: string;
+  date: string;       // ISO 8601 e.g. "2026-04-24"
+  image?: string;     // path relative to /public
+  pdf?: string;       // filename inside /public/downloads/
 };
 
-// Platzhalter-Daten. Wird später durch Sanity-Abfragen ersetzt.
-// z. B.: export async function getNews(): Promise<NewsItem[]> { return sanityClient.fetch(...) }
 export const news: NewsItem[] = [
   {
     slug: "brandenburger-sommerlager-2026",
@@ -16,26 +18,28 @@ export const news: NewsItem[] = [
     excerpt:
       "Auch dieses Jahr findet wieder unser beliebtes Sommerlager statt. Alle Informationen und die Anmeldung gibt es im Download-Bereich.",
     category: "Lehrgang",
-    date: "2026-04-12",
-    image: "/slider_7.jpg",
+    date: "2026-04-24",
+    image: "/2026_JKA_brandenburger_sommerlager.jpg",
+    pdf: "2026_JKA_brandenburger_sommerlager.pdf",
+  },
+  {
+    slug: "ostergrue-2026",
+    title: "Ostergrüße",
+    excerpt:
+      "Das gesamte JKA-Berlin-Team wünscht allen Mitgliedern, Freunden und Förderern frohe Ostern und erholsame Feiertage.",
+    category: "Aktuelles",
+    date: "2026-04-04",
+    image: "/pezibear-egg-1234723_1920.jpg",
   },
   {
     slug: "spring-camp-mit-ohta-sensei",
-    title: "Spring Camp mit Ohta Sensei",
+    title: "Spring Camp 2026",
     excerpt:
       "Ein intensives Wochenende mit Ohta Sensei – Kihon, Kata und Kumite auf höchstem Niveau im Honbu-Dojo.",
-    category: "Seminar",
-    date: "2026-03-08",
-    image: "/ohta_slider_v2.jpg",
-  },
-  {
-    slug: "angepasste-trainingszeiten-ostern",
-    title: "Angepasste Trainingszeiten zu Ostern",
-    excerpt:
-      "Über die Osterfeiertage gelten geänderte Trainingszeiten. Bitte beachtet den Aushang im Dojo und unsere Social-Media-Kanäle.",
-    category: "Aktuelles",
-    date: "2026-03-28",
-    image: "/shiina_slider.jpg",
+    category: "Lehrgang",
+    date: "2026-02-16",
+    image: "/Ohta_Sensei.jpg",
+    pdf: "2026_Spring_Camp.pdf",
   },
 ];
 

@@ -21,17 +21,17 @@ export default function NewsPage() {
         image="/slider_7.jpg"
       />
 
-      <section className="bg-zinc-950 py-20 lg:py-28">
+      <section className="bg-white py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => (
               <article
                 key={item.slug}
-                className="group relative flex flex-col overflow-hidden rounded-lg bg-zinc-900 border border-white/5 hover:border-red-600/40 transition-colors"
+                className="group relative flex flex-col overflow-hidden rounded-lg bg-white border border-zinc-200 hover:border-red-500 hover:shadow-lg transition-all duration-300"
               >
                 <Link
                   href={`/news/${item.slug}`}
-                  className="relative block aspect-[16/10] overflow-hidden"
+                  className="relative block aspect-[4/3] overflow-hidden bg-zinc-100"
                 >
                   {item.image && (
                     <Image
@@ -39,9 +39,10 @@ export default function NewsPage() {
                       alt={item.title}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="object-contain transition-transform duration-700 group-hover:scale-105"
                     />
                   )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                   <span className="absolute top-4 left-4 bg-red-600 text-white text-[11px] font-bold tracking-widest uppercase px-3 py-1">
                     {item.category}
                   </span>
@@ -50,19 +51,23 @@ export default function NewsPage() {
                   <time className="text-xs text-zinc-500 tracking-wider uppercase mb-3">
                     {formatDate(item.date)}
                   </time>
-                  <h3 className="text-xl font-bold text-white leading-snug mb-3 group-hover:text-red-500 transition-colors">
+                  <h3 className="text-xl font-bold text-zinc-900 leading-snug mb-3 group-hover:text-red-600 transition-colors">
                     <Link href={`/news/${item.slug}`}>{item.title}</Link>
                   </h3>
-                  <p className="text-sm text-zinc-400 leading-relaxed flex-1">
+                  <p className="text-sm text-zinc-600 leading-relaxed flex-1">
                     {item.excerpt}
                   </p>
+                  <Link
+                    href={`/news/${item.slug}`}
+                    className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-zinc-900 hover:text-red-600 transition-colors"
+                  >
+                    Weiterlesen
+                    <span className="transition-transform group-hover:translate-x-1">→</span>
+                  </Link>
                 </div>
               </article>
             ))}
           </div>
-          <p className="mt-12 text-sm text-zinc-600">
-            (Platzhalter-Inhalte – die News werden später über Sanity gepflegt.)
-          </p>
         </div>
       </section>
     </>

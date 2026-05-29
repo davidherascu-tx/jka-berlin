@@ -45,7 +45,7 @@ const events: TerminEvent[] = [
     organizerUrl: "https://www.jka-berlin.de/",
     location: "Basdorf",
     address: "16348 Basdorf",
-    image: "/2026_JKA_brandenburger_sommerlager_2026.jpg",
+    image: "/2026_JKA_brandenburger_sommerlager.jpg",
   },
   {
     title: "Kyu-Prüfungen",
@@ -167,7 +167,7 @@ export default function TerminePage() {
             <div className="flex-1 min-w-0">
               <TermineView events={events} />
             </div>
-            <div className="hidden lg:block w-72 shrink-0">
+            <div className="hidden lg:block w-72 shrink-0 self-start lg:sticky lg:top-24">
               <DojoKunSidebar />
             </div>
           </div>

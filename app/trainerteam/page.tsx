@@ -36,13 +36,14 @@ export default function TrainerteamPage() {
           <div className="grid gap-8 md:grid-cols-2">
             {trainers.map((t) => (
               <article key={t.name} className="group">
-                <div className="relative aspect-[3/4] overflow-hidden rounded-lg">
+                <div className="overflow-hidden rounded-lg bg-zinc-100">
                   <Image
                     src={t.image}
                     alt={t.name}
-                    fill
+                    width={800}
+                    height={1000}
                     sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="w-full h-auto transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>
                 <div className="mt-5">

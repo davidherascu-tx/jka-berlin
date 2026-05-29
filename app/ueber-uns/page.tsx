@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageHero from "../components/PageHero";
+import DojoKunAudio from "../components/DojoKunAudio";
 
 export const metadata: Metadata = {
   title: "Über uns",
@@ -120,6 +121,10 @@ export default function UeberUnsPage() {
               </li>
             ))}
           </ol>
+
+          <div className="mt-10 max-w-sm">
+            <DojoKunAudio />
+          </div>
         </div>
       </section>
     </>

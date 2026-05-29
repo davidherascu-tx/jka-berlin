@@ -1,6 +1,7 @@
 import Slider from "./components/Slider";
 import Intro from "./components/Intro";
 import News from "./components/News";
+import ShobuBanner from "./components/ShobuBanner";
 
 export default function Home() {
   return (
@@ -8,6 +9,7 @@ export default function Home() {
       <Slider />
       <Intro />
       <News />
+      <ShobuBanner />
     </>
   );
 }

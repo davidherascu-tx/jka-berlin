@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "PowerShell(head -100)",
-      "Bash(dir \"E:\\\\Next.js\\\\jka-berlin\\\\public\")"
+      "Bash(dir \"E:\\\\Next.js\\\\jka-berlin\\\\public\")",
+      "Bash(npx next *)"
     ]
   }
 }

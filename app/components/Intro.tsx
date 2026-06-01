@@ -39,14 +39,17 @@ export default function Intro() {
               Shotokan-Karate auf höchstem Niveau
             </h2>
             <p className="mt-6 text-lg text-zinc-600 leading-relaxed">
-              Im Honbu-Dojo „Leiden-kan” trainieren wir Karate-Dō im Stil der
-              Japan Karate Association (JKA). Bei uns stehen Tradition,
-              Disziplin und stetige Weiterentwicklung im Mittelpunkt – für
-              engagierte Karateka bis zum Meistergrad.
+              JKA-Berlin ist einer der drei von der Japan Karate Association
+              (JKA) offiziell anerkannten Karate-Verbände in Deutschland. Unser
+              Verband vertritt die JKA nicht nur in Berlin, sondern bundesweit
+              – mit dem Ziel, traditionelles Shotokan-Karate auf höchstem
+              Niveau zu fördern.
             </p>
             <p className="mt-4 text-lg text-zinc-600 leading-relaxed">
+              Im Honbu-Dojo „Leiden-kan” in Berlin-Pankow stehen Tradition,
+              Disziplin und stetige Weiterentwicklung im Mittelpunkt.
               Regelmäßige Lehrgänge mit internationalen Senseis bringen
-              höchste Karate-Qualität direkt nach Berlin.
+              höchste Karate-Qualität direkt zu uns.
             </p>
 
             <div className="mt-10 grid grid-cols-3 gap-6 border-t border-zinc-200 pt-8">

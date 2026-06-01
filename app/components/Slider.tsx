@@ -31,9 +31,9 @@ const slides: Slide[] = [
   },
   {
     src: "/slider_6.jpg",
-    title: "Der Weg hat kein Ende",
-    subtitle: "KARATE-DŌ",
-    caption: "Körper, Geist und Charakter im Einklang.",
+    title: "Eine Vertretung der Japan Karate Association in Deutschland",
+    subtitle: "JKA-BERLIN",
+    caption: "Anerkannter Verband der Japan Karate Association.",
   },
   {
     src: "/slider_7.jpg",

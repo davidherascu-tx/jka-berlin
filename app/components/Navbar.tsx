@@ -56,55 +56,66 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <ul className="hidden lg:flex items-center gap-1">
-          {menu.map((item) =>
-            "children" in item && item.children ? (
-              <li key={item.label} className="relative group">
-                <button
-                  className={`flex items-center gap-1 px-4 py-2 text-sm font-semibold tracking-wider uppercase cursor-default transition-colors duration-300 ${
-                    scrolled ? "text-zinc-800" : "text-white"
-                  }`}
-                  aria-haspopup="true"
-                >
-                  {item.label}
-                  <svg
-                    className="h-3 w-3 transition-transform duration-300 group-hover:rotate-180"
-                    viewBox="0 0 12 12"
-                    fill="currentColor"
-                    aria-hidden="true"
+        <div className="hidden lg:flex items-center gap-4">
+          <ul className="flex items-center gap-1">
+            {menu.map((item) =>
+              "children" in item && item.children ? (
+                <li key={item.label} className="relative group">
+                  <button
+                    className={`flex items-center gap-1 px-4 py-2 text-sm font-semibold tracking-wider uppercase cursor-default transition-colors duration-300 ${
+                      scrolled ? "text-zinc-800" : "text-white"
+                    }`}
+                    aria-haspopup="true"
                   >
-                    <path d="M6 8.5 1.5 4h9z" />
-                  </svg>
-                </button>
-                <div className="absolute left-1/2 top-full -translate-x-1/2 pt-2 opacity-0 invisible translate-y-1 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 ease-out">
-                  <div className="min-w-[200px] rounded-md bg-white shadow-xl border border-zinc-200 overflow-hidden">
-                    {item.children.map((sub) => (
-                      <Link
-                        key={sub.href}
-                        href={sub.href}
-                        className="block px-5 py-3 text-sm text-zinc-700 hover:bg-red-600 hover:text-white transition-colors"
-                      >
-                        {sub.label}
-                      </Link>
-                    ))}
+                    {item.label}
+                    <svg
+                      className="h-3 w-3 transition-transform duration-300 group-hover:rotate-180"
+                      viewBox="0 0 12 12"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path d="M6 8.5 1.5 4h9z" />
+                    </svg>
+                  </button>
+                  <div className="absolute left-1/2 top-full -translate-x-1/2 pt-2 opacity-0 invisible translate-y-1 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 ease-out">
+                    <div className="min-w-[200px] rounded-md bg-white shadow-xl border border-zinc-200 overflow-hidden">
+                      {item.children.map((sub) => (
+                        <Link
+                          key={sub.href}
+                          href={sub.href}
+                          className="block px-5 py-3 text-sm text-zinc-700 hover:bg-red-600 hover:text-white transition-colors"
+                        >
+                          {sub.label}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </li>
-            ) : (
-              <li key={item.label}>
-                <Link
-                  href={item.href!}
-                  className={`relative px-4 py-2 text-sm font-semibold tracking-wider uppercase group/link transition-colors duration-300 ${
-                    scrolled ? "text-zinc-800" : "text-white"
-                  }`}
-                >
-                  {item.label}
-                  <span className="absolute left-4 right-4 bottom-0.5 h-[2px] bg-red-600 scale-x-0 group-hover/link:scale-x-100 origin-left transition-transform duration-300" />
-                </Link>
-              </li>
-            )
-          )}
-        </ul>
+                </li>
+              ) : (
+                <li key={item.label}>
+                  <Link
+                    href={item.href!}
+                    className={`relative px-4 py-2 text-sm font-semibold tracking-wider uppercase group/link transition-colors duration-300 ${
+                      scrolled ? "text-zinc-800" : "text-white"
+                    }`}
+                  >
+                    {item.label}
+                    <span className="absolute left-4 right-4 bottom-0.5 h-[2px] bg-red-600 scale-x-0 group-hover/link:scale-x-100 origin-left transition-transform duration-300" />
+                  </Link>
+                </li>
+              )
+            )}
+          </ul>
+          <Link
+            href="/mitglied-werden"
+            className="ml-2 inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-md shadow-md shadow-red-600/20 transition-colors duration-300"
+          >
+            Jetzt Mitglied werden
+            <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M13 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
 
         <button
           aria-label={mobileOpen ? "Menu schliessen" : "Menu oeffnen"}
@@ -194,6 +205,18 @@ export default function Navbar() {
               </li>
             ))}
         </ul>
+        <div className="px-6 pb-4 pt-2">
+          <Link
+            href="/mitglied-werden"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold tracking-wider uppercase px-5 py-3 rounded-md shadow-md shadow-red-600/20 transition-colors"
+          >
+            Jetzt Mitglied werden
+            <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M13 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
         <div className={`flex flex-col gap-3 px-6 pb-5 pt-2 border-t ${scrolled ? "border-zinc-200" : "border-white/10"}`}>
           <a
             href="tel:+493048638161"

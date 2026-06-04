@@ -75,7 +75,10 @@ export default function UeberUnsPage() {
               Nach seinem Tod in 2003 übernahm sein langjähriger Assistent Yoshinobu Ohta das Amt des Chief-Instructors der JKA in England. Ganz in der Tradition seines Meisters steht uns auch Ohta Sensei regelmäßig in Berlin mit fachlichem und persönlichem Rat zur Seite.
             </p>
             <p>
-              Darüber hinaus stehen wir in engem Kontakt zu den erfahrenen Instructoren des Honbu Dojos in Tokio, wie z.B. Tanaka und Imura Sensei, die wir beide auch schon in unserem eigenen Dojo in Berlin-Pankow begrüßen durften. Regelmäßig nehmen wir an internationalen Lehrgängen, u.a. an der Instructorausbildung in Tokio, teil und sind stolz, den Weg des Karate-Do in Berlin beschreiten zu können.
+              Darüber hinaus stehen wir in engem Kontakt zu den erfahrenen Instructoren des Honbu Dojos in Tokio, wie Imura und Shiina Sensei, die wir beide regelmäßig in unserem eigenen Dojo in Berlin-Pankow begrüßen dürfen. Regelmäßig nehmen wir an internationalen Lehrgängen, u.a. an der Instructorausbildung in Tokio, teil und sind stolz, den Weg des Karate-Do in Berlin beschreiten zu können.
+            </p>
+            <p>
+              Wir bieten unseren Mitgliedern Training nach den Standards der JKA sowie eine qualifizierte Instruktoren- und Kampfrichterausbildung mit der Möglichkeit, internationale JKA-Lizenzen zu erwerben. Darüber hinaus finden in Berlin regelmäßig JKA-Danprüfungen unter der Leitung von Senseis aus dem JKA Headquarters statt.
             </p>
           </div>
         </div>

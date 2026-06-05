@@ -342,7 +342,7 @@ function VereinFields({
           </div>
           <div>
             <Label htmlFor="verband">Aktuelle Verbandszugehörigkeit</Label>
-            <input id="verband" name="verband" type="text" placeholder="z.B. DKV, ungebunden …" defaultValue={values.verband ?? ""} className={fieldClasses(false)} />
+            <input id="verband" name="verband" type="text" placeholder="z.B. DJKB, DKV, ungebunden …" defaultValue={values.verband ?? ""} className={fieldClasses(false)} />
           </div>
         </div>
       </fieldset>

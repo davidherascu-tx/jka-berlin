@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import PageHero from "../components/PageHero";
 import DojoKunAudio from "../components/DojoKunAudio";
 
@@ -80,6 +81,21 @@ export default function UeberUnsPage() {
             <p>
               Wir bieten unseren Mitgliedern Training nach den Standards der JKA sowie eine qualifizierte Instruktoren- und Kampfrichterausbildung mit der Möglichkeit, internationale JKA-Lizenzen zu erwerben. Darüber hinaus finden in Berlin regelmäßig JKA-Danprüfungen unter der Leitung von Senseis aus dem JKA Headquarters statt.
             </p>
+          </div>
+
+          <div className="mt-12 flex flex-wrap items-center gap-4">
+            <Link
+              href="/mitglied-werden"
+              className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold tracking-wider uppercase px-6 py-3 rounded-md shadow-md shadow-red-600/20 transition-colors duration-300"
+            >
+              Jetzt Mitglied werden
+              <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M13 5l7 7-7 7" />
+              </svg>
+            </Link>
+            <span className="text-sm text-zinc-500">
+              Werde Teil von JKA-Berlin und trainiere nach den Standards der JKA.
+            </span>
           </div>
         </div>
       </section>

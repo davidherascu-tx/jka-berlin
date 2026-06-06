@@ -4,7 +4,8 @@
       "PowerShell(head -100)",
       "Bash(dir \"E:\\\\Next.js\\\\jka-berlin\\\\public\")",
       "Bash(npx next *)",
-      "Bash(dir /b \"C:\\\\Users\\\\David\\\\Documents\\\\GitHub\\\\jka-berlin\")"
+      "Bash(dir /b \"C:\\\\Users\\\\David\\\\Documents\\\\GitHub\\\\jka-berlin\")",
+      "Bash(npm show *)"
     ]
   }
 }

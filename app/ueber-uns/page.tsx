@@ -64,6 +64,9 @@ export default function UeberUnsPage() {
               JKA-Berlin ist einer der drei von der Japan Karate Association (JKA) offiziell für Deutschland anerkannten Karate-Verbände. Obwohl der Name auf Berlin verweist, ist unser Verband nicht auf die Hauptstadt beschränkt – wir vertreten die JKA und ihre Werte bundesweit. Unser Honbu-Dojo {"„Leiden-kan”"} in Berlin-Pankow bildet dabei das Zentrum unserer Arbeit: Hier trainieren wir, richten Lehrgänge aus und empfangen internationale Senseis.
             </p>
             <p>
+              Wir bieten unseren Mitgliedern Training nach den Standards der JKA sowie eine qualifizierte Instruktoren- und Kampfrichterausbildung mit der Möglichkeit, internationale JKA-Lizenzen zu erwerben. Darüber hinaus finden in Berlin regelmäßig JKA-Danprüfungen unter der Leitung von Senseis aus dem JKA Headquarters statt.
+            </p>
+            <p>
               Die Japan Karate Association (JKA), {"„The Keeper of Karate's Highest Tradition”"}, wurde 1949 mit dem Ziel gegründet, Karate und seine Werte in Japan und der Welt zu verbreiten. Hierzu baute die JKA ihr berühmtes Instructorprogramm auf, um {"„Vollzeit”"}-Karatelehrer auszubilden. Der erste Chief-Instructor der JKA war Gichin Funakoshi, der {"„Vater des modernen Karate”"}.
             </p>
             <p>
@@ -77,9 +80,6 @@ export default function UeberUnsPage() {
             </p>
             <p>
               Darüber hinaus stehen wir in engem Kontakt zu den erfahrenen Instructoren des Honbu Dojos in Tokio, wie Imura und Shiina Sensei, die wir beide regelmäßig in unserem eigenen Dojo in Berlin-Pankow begrüßen dürfen. Regelmäßig nehmen wir an internationalen Lehrgängen, u.a. an der Instructorausbildung in Tokio, teil und sind stolz, den Weg des Karate-Do in Berlin beschreiten zu können.
-            </p>
-            <p>
-              Wir bieten unseren Mitgliedern Training nach den Standards der JKA sowie eine qualifizierte Instruktoren- und Kampfrichterausbildung mit der Möglichkeit, internationale JKA-Lizenzen zu erwerben. Darüber hinaus finden in Berlin regelmäßig JKA-Danprüfungen unter der Leitung von Senseis aus dem JKA Headquarters statt.
             </p>
           </div>
 

@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { submitMitgliedForm } from "./actions";
+import DateFieldDE from "./DateFieldDE";
 import {
   initialMitgliedState,
   type Mitgliedstyp,
@@ -246,7 +247,7 @@ function EinzelFields({
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
             <Label htmlFor="geburtsdatum" required>Geburtsdatum</Label>
-            <input id="geburtsdatum" name="geburtsdatum" type="date" defaultValue={values.geburtsdatum ?? ""} className={fieldClasses(!!errors.geburtsdatum)} />
+            <DateFieldDE id="geburtsdatum" name="geburtsdatum" defaultValue={values.geburtsdatum ?? ""} className={fieldClasses(!!errors.geburtsdatum)} />
             <ErrorMsg msg={errors.geburtsdatum} />
           </div>
           <div>

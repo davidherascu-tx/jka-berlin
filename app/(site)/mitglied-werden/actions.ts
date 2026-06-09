@@ -211,6 +211,9 @@ export async function submitMitgliedForm(
   if (data.plz && !/^\d{4,5}$/.test(data.plz)) {
     errors.plz = "Bitte gib eine gültige PLZ an.";
   }
+  if (data.geburtsdatum && !/^\d{2}\.\d{2}\.\d{4}$/.test(data.geburtsdatum)) {
+    errors.geburtsdatum = "Bitte gib das Datum als TT.MM.JJJJ an.";
+  }
 
   if (Object.keys(errors).length > 0) {
     return {
@@ -227,12 +230,23 @@ export async function submitMitgliedForm(
 
   const emailed = await sendViaResend(typ, data);
 
-  if (!emailed && !process.env.RESEND_API_KEY) {
-    console.warn(
-      "[mitglied-werden] RESEND_API_KEY nicht gesetzt – Anfrage wurde lokal gespeichert unter data/mitglied-submissions.json."
-    );
-  } else if (!emailed) {
-    console.error("[mitglied-werden] E-Mail-Versand fehlgeschlagen.");
+  if (!emailed) {
+    if (!process.env.RESEND_API_KEY) {
+      console.error(
+        "[mitglied-werden] RESEND_API_KEY nicht gesetzt – E-Mail konnte nicht versendet werden."
+      );
+    } else {
+      console.error(
+        "[mitglied-werden] E-Mail-Versand fehlgeschlagen (Domain in Resend verifiziert?)."
+      );
+    }
+    return {
+      status: "error",
+      message:
+        "Deine Anfrage konnte momentan nicht gesendet werden. Bitte versuche es später erneut oder schreibe uns direkt an honbu@jka-berlin.de.",
+      values: data,
+      mitgliedstyp: typ,
+    };
   }
 
   return {

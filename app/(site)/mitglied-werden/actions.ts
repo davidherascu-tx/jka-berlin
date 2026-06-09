@@ -159,6 +159,13 @@ async function sendViaResend(
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.MITGLIED_MAIL_TO ?? "honbu@jka-berlin.de";
   const from = process.env.MITGLIED_MAIL_FROM ?? "JKA-Berlin <onboarding@resend.dev>";
+  // Diagnose: zeigt in den Netlify-Function-Logs, ob der Key zur Laufzeit ankommt
+  // (Wert wird NICHT geloggt, nur Vorhandensein + Laenge).
+  console.log(
+    `[mitglied-werden] sendViaResend: RESEND_API_KEY=${
+      apiKey ? `present(len ${apiKey.length})` : "MISSING"
+    }, from="${from}", to="${to}"`
+  );
   if (!apiKey) return false;
   const { html, text, subject } = buildEmailBody(typ, data);
   try {

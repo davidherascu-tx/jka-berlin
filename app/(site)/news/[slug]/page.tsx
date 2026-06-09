@@ -5,9 +5,9 @@ import { notFound } from "next/navigation";
 import { PortableText } from "@portabletext/react";
 import { getNewsItem, formatDate } from "../../lib/news";
 
-export async function generateMetadata(
-  props: PageProps<"/news/[slug]">
-): Promise<Metadata> {
+export async function generateMetadata(props: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
   const { slug } = await props.params;
   const item = await getNewsItem(slug);
   return {
@@ -34,7 +34,9 @@ function IconDownload() {
   );
 }
 
-export default async function NewsDetailPage(props: PageProps<"/news/[slug]">) {
+export default async function NewsDetailPage(props: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await props.params;
   const item = await getNewsItem(slug);
 

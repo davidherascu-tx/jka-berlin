@@ -155,18 +155,19 @@ function buildEmailBody(
 async function sendViaResend(
   typ: Mitgliedstyp,
   data: Record<string, string>
-): Promise<boolean> {
+): Promise<{ ok: boolean; detail: string }> {
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.MITGLIED_MAIL_TO ?? "honbu@jka-berlin.de";
   const from = process.env.MITGLIED_MAIL_FROM ?? "JKA-Berlin <onboarding@resend.dev>";
-  // Diagnose: zeigt in den Netlify-Function-Logs, ob der Key zur Laufzeit ankommt
-  // (Wert wird NICHT geloggt, nur Vorhandensein + Laenge).
+  // TEMPORAERE Diagnose: zeigt, ob der Key zur Laufzeit ankommt (Wert wird NICHT geloggt).
   console.log(
     `[mitglied-werden] sendViaResend: RESEND_API_KEY=${
       apiKey ? `present(len ${apiKey.length})` : "MISSING"
     }, from="${from}", to="${to}"`
   );
-  if (!apiKey) return false;
+  if (!apiKey) {
+    return { ok: false, detail: `key=MISSING from="${from}" to="${to}"` };
+  }
   const { html, text, subject } = buildEmailBody(typ, data);
   try {
     const resend = new Resend(apiKey);
@@ -180,12 +181,19 @@ async function sendViaResend(
     });
     if (error) {
       console.error("[mitglied-werden] Resend error:", error);
-      return false;
+      const e = error as { name?: string; message?: string };
+      return {
+        ok: false,
+        detail: `key=present(${apiKey.length}) resendError=${e.name ?? ""}:${
+          e.message ?? JSON.stringify(error)
+        }`,
+      };
     }
-    return true;
+    return { ok: true, detail: "ok" };
   } catch (err) {
     console.error("[mitglied-werden] Resend exception:", err);
-    return false;
+    const m = err instanceof Error ? err.message : String(err);
+    return { ok: false, detail: `key=present(${apiKey.length}) exception=${m}` };
   }
 }
 
@@ -235,22 +243,15 @@ export async function submitMitgliedForm(
   const submittedAt = new Date().toISOString();
   saveLocal({ submittedAt, mitgliedstyp: typ, ...data });
 
-  const emailed = await sendViaResend(typ, data);
+  const sendResult = await sendViaResend(typ, data);
 
-  if (!emailed) {
-    if (!process.env.RESEND_API_KEY) {
-      console.error(
-        "[mitglied-werden] RESEND_API_KEY nicht gesetzt – E-Mail konnte nicht versendet werden."
-      );
-    } else {
-      console.error(
-        "[mitglied-werden] E-Mail-Versand fehlgeschlagen (Domain in Resend verifiziert?)."
-      );
-    }
+  if (!sendResult.ok) {
+    console.error("[mitglied-werden] Versand fehlgeschlagen:", sendResult.detail);
     return {
       status: "error",
       message:
-        "Deine Anfrage konnte momentan nicht gesendet werden. Bitte versuche es später erneut oder schreibe uns direkt an honbu@jka-berlin.de.",
+        "Deine Anfrage konnte momentan nicht gesendet werden. Bitte versuche es später erneut oder schreibe uns direkt an honbu@jka-berlin.de. " +
+        `[Diagnose: ${sendResult.detail}]`,
       values: data,
       mitgliedstyp: typ,
     };

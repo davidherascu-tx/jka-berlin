@@ -160,15 +160,29 @@ function envStr(name: string): string {
   return v.trim().replace(/^['"]+|['"]+$/g, "").trim();
 }
 
+const PLAIN_EMAIL_RE = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
+const NAMED_EMAIL_RE = /^.+<[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+>$/;
+
+// Robuste Absender-Aufloesung: repariert ein fehlendes ">", validiert das
+// Format und faellt bei Unbrauchbarem auf einen garantiert gueltigen Wert zurueck.
+function resolveFrom(name: string, fallback: string): string {
+  let v = envStr(name);
+  if (v.includes("<") && !v.includes(">")) v += ">"; // fehlende Klammer ergaenzen
+  return PLAIN_EMAIL_RE.test(v) || NAMED_EMAIL_RE.test(v) ? v : fallback;
+}
+
+function resolveEmail(name: string, fallback: string): string {
+  const v = envStr(name);
+  return PLAIN_EMAIL_RE.test(v) ? v : fallback;
+}
+
 async function sendViaResend(
   typ: Mitgliedstyp,
   data: Record<string, string>
 ): Promise<{ ok: boolean; detail: string }> {
   const apiKey = process.env.RESEND_API_KEY;
-  let to = envStr("MITGLIED_MAIL_TO");
-  if (!to.includes("@")) to = "honbu@jka-berlin.de";
-  let from = envStr("MITGLIED_MAIL_FROM");
-  if (!from.includes("@")) from = "JKA-Berlin <onboarding@resend.dev>";
+  const to = resolveEmail("MITGLIED_MAIL_TO", "honbu@jka-berlin.de");
+  const from = resolveFrom("MITGLIED_MAIL_FROM", "JKA-Berlin <onboarding@resend.dev>");
   // TEMPORAERE Diagnose: zeigt, ob der Key zur Laufzeit ankommt (Wert wird NICHT geloggt).
   console.log(
     `[mitglied-werden] sendViaResend: RESEND_API_KEY=${

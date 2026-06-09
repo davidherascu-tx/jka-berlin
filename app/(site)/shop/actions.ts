@@ -52,6 +52,17 @@ function envStr(name: string): string {
   return v.trim().replace(/^['"]+|['"]+$/g, "").trim();
 }
 
+const PLAIN_EMAIL_RE = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
+const NAMED_EMAIL_RE = /^.+<[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+>$/;
+
+// Robuste Absender-Aufloesung: repariert ein fehlendes ">", validiert das
+// Format und faellt bei Unbrauchbarem auf einen garantiert gueltigen Wert zurueck.
+function resolveFrom(value: string, fallback: string): string {
+  let v = value;
+  if (v.includes("<") && !v.includes(">")) v += ">";
+  return PLAIN_EMAIL_RE.test(v) || NAMED_EMAIL_RE.test(v) ? v : fallback;
+}
+
 function saveLocal(entry: Record<string, unknown>): void {
   try {
     const dir = join(process.cwd(), "data");
@@ -234,9 +245,11 @@ export async function submitOrder(payload: OrderPayload): Promise<OrderResult> {
 
   const apiKey = process.env.RESEND_API_KEY;
   let to = envStr("SHOP_MAIL_TO");
-  if (!to.includes("@")) to = "honbu@jka-berlin.de";
-  let from = envStr("SHOP_MAIL_FROM") || envStr("MITGLIED_MAIL_FROM");
-  if (!from.includes("@")) from = "JKA-Berlin <onboarding@resend.dev>";
+  if (!PLAIN_EMAIL_RE.test(to)) to = "honbu@jka-berlin.de";
+  const from = resolveFrom(
+    envStr("SHOP_MAIL_FROM") || envStr("MITGLIED_MAIL_FROM"),
+    "JKA-Berlin <onboarding@resend.dev>"
+  );
 
   if (!apiKey) {
     console.warn(

@@ -179,18 +179,13 @@ function resolveEmail(name: string, fallback: string): string {
 async function sendViaResend(
   typ: Mitgliedstyp,
   data: Record<string, string>
-): Promise<{ ok: boolean; detail: string }> {
+): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
   const to = resolveEmail("MITGLIED_MAIL_TO", "honbu@jka-berlin.de");
   const from = resolveFrom("MITGLIED_MAIL_FROM", "JKA-Berlin <onboarding@resend.dev>");
-  // TEMPORAERE Diagnose: zeigt, ob der Key zur Laufzeit ankommt (Wert wird NICHT geloggt).
-  console.log(
-    `[mitglied-werden] sendViaResend: RESEND_API_KEY=${
-      apiKey ? `present(len ${apiKey.length})` : "MISSING"
-    }, from="${from}", to="${to}"`
-  );
   if (!apiKey) {
-    return { ok: false, detail: `key=MISSING from="${from}" to="${to}"` };
+    console.error("[mitglied-werden] RESEND_API_KEY fehlt zur Laufzeit.");
+    return false;
   }
   const { html, text, subject } = buildEmailBody(typ, data);
   try {
@@ -205,19 +200,12 @@ async function sendViaResend(
     });
     if (error) {
       console.error("[mitglied-werden] Resend error:", error);
-      const e = error as { name?: string; message?: string };
-      return {
-        ok: false,
-        detail: `key=present(${apiKey.length}) from="${from}" resendError=${e.name ?? ""}:${
-          e.message ?? JSON.stringify(error)
-        }`,
-      };
+      return false;
     }
-    return { ok: true, detail: "ok" };
+    return true;
   } catch (err) {
     console.error("[mitglied-werden] Resend exception:", err);
-    const m = err instanceof Error ? err.message : String(err);
-    return { ok: false, detail: `key=present(${apiKey.length}) exception=${m}` };
+    return false;
   }
 }
 
@@ -267,15 +255,13 @@ export async function submitMitgliedForm(
   const submittedAt = new Date().toISOString();
   saveLocal({ submittedAt, mitgliedstyp: typ, ...data });
 
-  const sendResult = await sendViaResend(typ, data);
+  const emailed = await sendViaResend(typ, data);
 
-  if (!sendResult.ok) {
-    console.error("[mitglied-werden] Versand fehlgeschlagen:", sendResult.detail);
+  if (!emailed) {
     return {
       status: "error",
       message:
-        "Deine Anfrage konnte momentan nicht gesendet werden. Bitte versuche es später erneut oder schreibe uns direkt an honbu@jka-berlin.de. " +
-        `[Diagnose: ${sendResult.detail}]`,
+        "Deine Anfrage konnte momentan nicht gesendet werden. Bitte versuche es später erneut oder schreibe uns direkt an honbu@jka-berlin.de.",
       values: data,
       mitgliedstyp: typ,
     };

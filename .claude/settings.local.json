@@ -22,7 +22,10 @@
       "Bash(SANITY_API_TOKEN=skTqegWOkYdKclYwB9eSdM0ucuCRiz6AKscmCW8cGOj4ShPjD8eAMlCpQTZKcMZPTkVZgkNmg1rGqLpge node -e ' *)",
       "Bash(SANITY_API_TOKEN=\"skTqegWOkYdKclYwB9eSdM0ucuCRiz6AKscmCW8cGOj4ShPjD8eAMlCpQTZKcMZPTkVZgkNmg1rGqLpge\" npx sanity cors list)",
       "Bash(curl -sS -m 8 -N -H \"Accept: text/event-stream\" \"https://wf9qza38.api.sanity.io/v2026-06-09/data/live/events/production\")",
-      "Bash(echo \"---EXIT: $?---\")"
+      "Bash(echo \"---EXIT: $?---\")",
+      "Bash(git check-ignore *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }

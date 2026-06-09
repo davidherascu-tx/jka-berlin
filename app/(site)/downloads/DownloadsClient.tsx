@@ -6,13 +6,13 @@ import { useState, useEffect } from 'react';
 
 type FilterKey = 'Alle' | 'Lehrgang' | 'Allgemeine' | 'Technisches' | 'Prüfungen' | 'Videos';
 
-type DownloadEntry = {
+export type DownloadEntry = {
   id: string;
   title: string;
   category: 'Lehrgang' | 'Allgemeine' | 'Technisches' | 'Prüfungen' | '';
   updatedAt: string;
-  file: string;
-  initialCount: number;
+  fileUrl: string;
+  fileName: string;
 };
 
 type VideoEntry = {
@@ -23,105 +23,8 @@ type VideoEntry = {
 };
 
 // ─── Data ───────────────────────────────────────────────────────────────────
-
-const downloads: DownloadEntry[] = [
-  {
-    id: 'brandenburger-sommerlager',
-    title: 'Brandenburger Sommerlager',
-    category: 'Lehrgang',
-    updatedAt: '24. April 2026',
-    file: '2026_JKA_brandenburger_sommerlager.pdf',
-    initialCount: 7,
-  },
-  {
-    id: 'spring-camp-2026',
-    title: 'Spring Camp 2026',
-    category: 'Lehrgang',
-    updatedAt: '16. Februar 2026',
-    file: '2026_JKA_Springcamp_Ohta_info.pdf',
-    initialCount: 92,
-  },
-  {
-    id: 'jahresplanung-2026',
-    title: 'Jahresplanung 2026',
-    category: 'Allgemeine',
-    updatedAt: '23. November 2025',
-    file: '2026_Terminplanung.pdf',
-    initialCount: 180,
-  },
-  {
-    id: 'pruefungsordnung-kyupruefung',
-    title: 'Prüfungsordnung / Kyuprüfung',
-    category: 'Technisches',
-    updatedAt: '19. Juni 2025',
-    file: '2018_Pruefungsordnung_Kyupruefungen_JKA_Berlin.pdf',
-    initialCount: 131,
-  },
-  {
-    id: 'antrag-lizenzpruefungen',
-    title: 'Antrag Lizenzprüfungen',
-    category: 'Prüfungen',
-    updatedAt: '13. Februar 2025',
-    file: 'Antrag-Lizenzpruefungen.pdf',
-    initialCount: 55,
-  },
-  {
-    id: 'antrag-danpruefung',
-    title: 'Antrag Danprüfung',
-    category: 'Prüfungen',
-    updatedAt: '13. Februar 2025',
-    file: 'Antrag-Danpruefung.pdf',
-    initialCount: 87,
-  },
-  {
-    id: 'dojo-kun',
-    title: 'Dojo Kun',
-    category: 'Allgemeine',
-    updatedAt: '27. März 2019',
-    file: 'dojokun.pdf',
-    initialCount: 251,
-  },
-  {
-    id: 'jka-wettkampfordnung-aktuell',
-    title: 'JKA Wettkampfordnung aktuell',
-    category: 'Technisches',
-    updatedAt: '24. April 2019',
-    file: '2015_Tournament-Rules-Regulations.pdf',
-    initialCount: 352,
-  },
-  {
-    id: 'jka-wettkampfordnung-vor-2015',
-    title: 'JKA Wettkampfordnung vor 2015',
-    category: 'Technisches',
-    updatedAt: '27. März 2019',
-    file: '2015_tournament_rule_regulations.pdf',
-    initialCount: 69,
-  },
-  {
-    id: 'kata',
-    title: 'Kata',
-    category: 'Technisches',
-    updatedAt: '27. März 2019',
-    file: 'Kata.pdf',
-    initialCount: 399,
-  },
-  {
-    id: 'antrag-kyupruefungen',
-    title: 'Antrag Kyuprüfungen',
-    category: 'Prüfungen',
-    updatedAt: '27. März 2019',
-    file: 'Prüfungsbogen JKA Berlin.pdf',
-    initialCount: 191,
-  },
-  {
-    id: 'technical-manual-instructor',
-    title: 'Technical Manual for the Instructor',
-    category: 'Technisches',
-    updatedAt: '27. März 2019',
-    file: 'tech_manual_instructor.pdf',
-    initialCount: 202,
-  },
-];
+// Die Downloads kommen jetzt aus Sanity (via Props). Videos bleiben statisch,
+// da es sich um externe JKA-Links handelt (keine Datei-Assets).
 
 const videos: VideoEntry[] = [
   {
@@ -232,7 +135,7 @@ function Spinner() {
 
 // ─── Main export ──────────────────────────────────────────────────────────────
 
-export default function DownloadsClient() {
+export default function DownloadsClient({ downloads }: { downloads: DownloadEntry[] }) {
   const [filter, setFilter] = useState<FilterKey>('Alle');
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState<string | null>(null);
@@ -244,7 +147,7 @@ export default function DownloadsClient() {
       .catch(() => {});
   }, []);
 
-  const getCount = (id: string, initial: number) => counts[id] ?? initial;
+  const getCount = (id: string) => counts[id] ?? 0;
 
   const handleDownload = async (entry: DownloadEntry) => {
     setLoading(entry.id);
@@ -261,9 +164,11 @@ export default function DownloadsClient() {
     } catch {
       // count update failed
     }
+    // Sanity-Asset-URL; "?dl=" erzwingt den Download mit Originaldateinamen.
+    const sep = entry.fileUrl.includes('?') ? '&' : '?';
     const a = document.createElement('a');
-    a.href = `/downloads/${encodeURIComponent(entry.file)}`;
-    a.download = `${entry.title}.pdf`;
+    a.href = `${entry.fileUrl}${sep}dl=${encodeURIComponent(entry.fileName)}`;
+    a.download = entry.fileName;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -315,7 +220,7 @@ export default function DownloadsClient() {
                 {/* Desktop row */}
                 <div className="hidden sm:grid sm:grid-cols-[auto_1fr_7rem_7rem_auto] gap-5 items-center px-1">
                   <div className="shrink-0">
-                    <FileIcon filename={entry.file} />
+                    <FileIcon filename={entry.fileName} />
                   </div>
 
                   <div className="min-w-0">
@@ -325,7 +230,7 @@ export default function DownloadsClient() {
                     <div className="flex items-center gap-1 mt-1 text-zinc-400">
                       <IconDownloadSmall />
                       <span className="text-xs">
-                        <span className="font-bold text-zinc-500">{getCount(entry.id, entry.initialCount)}</span>
+                        <span className="font-bold text-zinc-500">{getCount(entry.id)}</span>
                         {' '}Downloads
                       </span>
                     </div>
@@ -352,7 +257,7 @@ export default function DownloadsClient() {
                 {/* Mobile row */}
                 <div className="sm:hidden flex items-center gap-4">
                   <div className="shrink-0">
-                    <FileIcon filename={entry.file} />
+                    <FileIcon filename={entry.fileName} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-base font-black text-zinc-900 leading-tight">
@@ -363,7 +268,7 @@ export default function DownloadsClient() {
                       <span>{entry.updatedAt}</span>
                       <span className="flex items-center gap-1">
                         <IconDownloadSmall />
-                        <span className="font-bold text-zinc-500">{getCount(entry.id, entry.initialCount)}</span>
+                        <span className="font-bold text-zinc-500">{getCount(entry.id)}</span>
                       </span>
                     </div>
                   </div>

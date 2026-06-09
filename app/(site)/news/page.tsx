@@ -9,8 +9,10 @@ export const metadata: Metadata = {
   description: "Aktuelles, Lehrgänge und Neuigkeiten aus der JKA Berlin.",
 };
 
-export default function NewsPage() {
-  const items = getNews();
+export const dynamic = "force-dynamic";
+
+export default async function NewsPage() {
+  const items = await getNews();
 
   return (
     <>
@@ -33,10 +35,10 @@ export default function NewsPage() {
                   href={`/news/${item.slug}`}
                   className="relative block aspect-[4/3] overflow-hidden bg-zinc-100"
                 >
-                  {item.image && (
+                  {item.imageUrl && (
                     <Image
-                      src={item.image}
-                      alt={item.title}
+                      src={item.imageUrl}
+                      alt={item.imageAlt ?? item.title}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-contain transition-transform duration-700 group-hover:scale-105"

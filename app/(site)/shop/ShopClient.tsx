@@ -1,20 +1,18 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useTransition } from 'react';
 import Image from 'next/image';
+import {
+  products,
+  getPriceForSize,
+  parsePrice,
+  fmt,
+  type Product,
+} from './shop-data';
+import { submitOrder } from './actions';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type Tier = { sizes: string[]; price: string; label: string };
-type ColorSwatch = { name: string; hex: string };
-type Product = {
-  id: string;
-  name: string;
-  images: string[];
-  note: string;
-  tiers: Tier[];
-  colors?: ColorSwatch[];
-};
 type CartItem = {
   uid: string;
   productId: string;
@@ -22,88 +20,15 @@ type CartItem = {
   color: string;
   quantity: number;
 };
-type ContactForm = { name: string; email: string; phone: string; message: string };
-
-// ─── Data ────────────────────────────────────────────────────────────────────
-
-const products: Product[] = [
-  {
-    id: 'trainingsanzug',
-    name: 'Trainingsanzug',
-    images: ['/trainingsanzug.jpg'],
-    note: 'Mit JKA-Berlin-Logo',
-    tiers: [
-      { sizes: ['140', '152', '164'], price: '55,00 €', label: '140 · 152 · 164' },
-      { sizes: ['S', 'M', 'L', 'XL', 'XXL'], price: '60,00 €', label: 'S · M · L · XL · XXL' },
-    ],
-  },
-  {
-    id: 'hoodie',
-    name: 'Hoodie',
-    images: ['/jka_hoodie.jpg'],
-    note: 'Kapuzenpullover mit JKA-Berlin-Aufdruck',
-    tiers: [
-      { sizes: ['152', '164'], price: '37,00 €', label: '152 · 164' },
-      { sizes: ['S', 'M', 'L', 'XL'], price: '42,00 €', label: 'S · M · L · XL' },
-    ],
-  },
-  {
-    id: 'tshirt-shobu',
-    name: 'T-Shirt (Shobu)',
-    images: ['/t_shirt_shobu.jpg'],
-    note: 'Shobu-Motiv',
-    tiers: [{ sizes: ['S', 'M', 'L', 'XL'], price: '14,00 €', label: 'S · M · L · XL' }],
-  },
-  {
-    id: 'tshirt',
-    name: 'T-Shirt',
-    images: ['/t-shirt-rueckenprint.jpg', '/t-shirt-rueckenprint_2.jpg'],
-    note: 'Mit Rückenprint',
-    tiers: [{ sizes: ['S', 'M', 'L', 'XL'], price: '14,00 €', label: 'S · M · L · XL' }],
-    colors: [
-      { name: 'Schwarz', hex: '#18181b' },
-      { name: 'Rot', hex: '#dc2626' },
-      { name: 'Flaschengrün', hex: '#166534' },
-      { name: 'Orange', hex: '#f97316' },
-    ],
-  },
-  {
-    id: 'sporttasche',
-    name: 'Sporttasche',
-    images: ['/sporttasche.jpg'],
-    note: 'Mit Vereinslogo bestickt',
-    tiers: [{ sizes: [], price: '43,00 €', label: 'Einheitsgröße' }],
-  },
-  {
-    id: 'basecap',
-    name: 'Base Cap',
-    images: ['/basecap.jpg'],
-    note: 'Universalgröße',
-    tiers: [{ sizes: [], price: '10,00 €', label: 'Universal' }],
-    colors: [
-      { name: 'Rot', hex: '#dc2626' },
-      { name: 'Dunkelblau', hex: '#1e3a5f' },
-    ],
-  },
-];
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function getPriceForSize(product: Product, size: string): string | null {
-  if (product.tiers[0].sizes.length === 0) return product.tiers[0].price;
-  for (const tier of product.tiers) {
-    if (tier.sizes.includes(size)) return tier.price;
-  }
-  return null;
-}
-
-function parsePrice(str: string): number {
-  return parseFloat(str.replace(',', '.').replace(/\s*€/, '').trim());
-}
-
-function fmt(n: number) {
-  return n.toFixed(2).replace('.', ',') + ' €';
-}
+type OrderForm = {
+  name: string;
+  email: string;
+  phone: string;
+  strasse: string;
+  plz: string;
+  ort: string;
+  message: string;
+};
 
 // ─── Icons ───────────────────────────────────────────────────────────────────
 
@@ -134,6 +59,11 @@ function IconCart() {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
         d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
     </svg>
+  );
+}
+function IconSpinner() {
+  return (
+    <span className="h-4 w-4 shrink-0 border-2 border-white/30 border-t-white rounded-full animate-spin inline-block" />
   );
 }
 
@@ -312,21 +242,25 @@ function ProductCard({
 
 function CartPanel({
   cart,
-  contact,
+  form,
   onRemove,
   onQtyChange,
-  onContactChange,
+  onFormChange,
   onSubmit,
   submitted,
+  pending,
+  error,
   onReset,
 }: {
   cart: CartItem[];
-  contact: ContactForm;
+  form: OrderForm;
   onRemove: (uid: string) => void;
   onQtyChange: (uid: string, qty: number) => void;
-  onContactChange: (field: keyof ContactForm, value: string) => void;
+  onFormChange: (field: keyof OrderForm, value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   submitted: boolean;
+  pending: boolean;
+  error: string | null;
   onReset: () => void;
 }) {
   const total = cart.reduce((sum, item) => {
@@ -364,9 +298,10 @@ function CartPanel({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <p className="font-bold text-zinc-900 mb-1">E-Mail-Programm geöffnet</p>
+          <p className="font-bold text-zinc-900 mb-1">Bestellung gesendet</p>
           <p className="text-xs text-zinc-500 mb-5 leading-relaxed">
-            Bitte sende die vorbereitete Bestellnachricht ab. Wir melden uns schnellstmöglich.
+            Vielen Dank! Deine Bestellung ist bei uns eingegangen. Wir melden uns
+            schnellstmöglich per E-Mail bei dir.
           </p>
           <button
             onClick={onReset}
@@ -473,7 +408,7 @@ function CartPanel({
             <div className="flex items-center gap-2 mb-3">
               <span className="h-px flex-1 bg-zinc-100" />
               <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-400">
-                Kontakt
+                Kontakt & Lieferadresse
               </span>
               <span className="h-px flex-1 bg-zinc-100" />
             </div>
@@ -483,10 +418,47 @@ function CartPanel({
                 type="text"
                 required
                 placeholder="Vor- und Nachname"
-                value={contact.name}
-                onChange={(e) => onContactChange('name', e.target.value)}
+                value={form.name}
+                onChange={(e) => onFormChange('name', e.target.value)}
                 className={inp}
               />
+            </div>
+            <div>
+              <label className={lbl}>Straße & Hausnummer *</label>
+              <input
+                type="text"
+                required
+                placeholder="Musterstraße 12"
+                value={form.strasse}
+                onChange={(e) => onFormChange('strasse', e.target.value)}
+                className={inp}
+              />
+            </div>
+            <div className="flex gap-2.5">
+              <div className="w-24 shrink-0">
+                <label className={lbl}>PLZ *</label>
+                <input
+                  type="text"
+                  required
+                  inputMode="numeric"
+                  pattern="\d{4,5}"
+                  placeholder="13187"
+                  value={form.plz}
+                  onChange={(e) => onFormChange('plz', e.target.value)}
+                  className={inp}
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <label className={lbl}>Ort *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Berlin"
+                  value={form.ort}
+                  onChange={(e) => onFormChange('ort', e.target.value)}
+                  className={inp}
+                />
+              </div>
             </div>
             <div>
               <label className={lbl}>E-Mail *</label>
@@ -494,8 +466,8 @@ function CartPanel({
                 type="email"
                 required
                 placeholder="deine@email.de"
-                value={contact.email}
-                onChange={(e) => onContactChange('email', e.target.value)}
+                value={form.email}
+                onChange={(e) => onFormChange('email', e.target.value)}
                 className={inp}
               />
             </div>
@@ -505,8 +477,8 @@ function CartPanel({
                 type="tel"
                 required
                 placeholder="+49 …"
-                value={contact.phone}
-                onChange={(e) => onContactChange('phone', e.target.value)}
+                value={form.phone}
+                onChange={(e) => onFormChange('phone', e.target.value)}
                 className={inp}
               />
             </div>
@@ -518,21 +490,35 @@ function CartPanel({
               <textarea
                 rows={3}
                 placeholder="Besondere Wünsche …"
-                value={contact.message}
-                onChange={(e) => onContactChange('message', e.target.value)}
+                value={form.message}
+                onChange={(e) => onFormChange('message', e.target.value)}
                 className={`${inp} resize-none`}
               />
             </div>
           </div>
 
+          {/* Error */}
+          {error && (
+            <div className="mx-5 mb-3 rounded-lg border border-red-200 bg-red-50 px-4 py-2.5">
+              <p className="text-xs font-semibold text-red-700">{error}</p>
+            </div>
+          )}
+
           {/* Submit */}
           <div className="px-5 pb-5">
             <button
               type="submit"
-              disabled={cart.length === 0}
-              className="w-full bg-red-600 hover:bg-red-700 disabled:bg-zinc-200 disabled:text-zinc-400 disabled:cursor-not-allowed text-white font-bold py-3 text-xs tracking-widest uppercase rounded transition-colors duration-200"
+              disabled={cart.length === 0 || pending}
+              className="w-full inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 disabled:bg-zinc-200 disabled:text-zinc-400 disabled:cursor-not-allowed text-white font-bold py-3 text-xs tracking-widest uppercase rounded transition-colors duration-200"
             >
-              Bestellung absenden
+              {pending ? (
+                <>
+                  <IconSpinner />
+                  Wird gesendet …
+                </>
+              ) : (
+                'Bestellung absenden'
+              )}
             </button>
             {cart.length === 0 && (
               <p className="text-[11px] text-zinc-400 text-center mt-1.5">
@@ -548,15 +534,22 @@ function CartPanel({
 
 // ─── Main export ─────────────────────────────────────────────────────────────
 
+const EMPTY_FORM: OrderForm = {
+  name: '',
+  email: '',
+  phone: '',
+  strasse: '',
+  plz: '',
+  ort: '',
+  message: '',
+};
+
 export default function ShopClient() {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [contact, setContact] = useState<ContactForm>({
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
-  });
+  const [form, setForm] = useState<OrderForm>(EMPTY_FORM);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
   const uidRef = useRef(0);
 
   const addToCart = (productId: string, size: string, color: string, qty: number) => {
@@ -579,49 +572,31 @@ export default function ShopClient() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (cart.length === 0) return;
+    setError(null);
 
-    const total = cart.reduce((sum, item) => {
-      const product = products.find((p) => p.id === item.productId)!;
-      const price = getPriceForSize(product, item.size);
-      return sum + (price ? parsePrice(price) * item.quantity : 0);
-    }, 0);
-
-    const itemLines = cart.map((item) => {
-      const product = products.find((p) => p.id === item.productId)!;
-      const price = getPriceForSize(product, item.size);
-      const details = [item.size && `Gr. ${item.size}`, item.color]
-        .filter(Boolean)
-        .join(', ');
-      const lineTotal = price
-        ? ` = ${fmt(parsePrice(price) * item.quantity)}`
-        : '';
-      return `• ${product.name}${details ? ` (${details})` : ''} × ${item.quantity}${lineTotal}`;
+    startTransition(async () => {
+      const result = await submitOrder({
+        items: cart.map(({ productId, size, color, quantity }) => ({
+          productId,
+          size,
+          color,
+          quantity,
+        })),
+        address: form,
+      });
+      if (result.ok) {
+        setSubmitted(true);
+      } else {
+        setError(result.error ?? 'Unbekannter Fehler. Bitte versuche es erneut.');
+      }
     });
-
-    const lines = [
-      '=== BESTELLUNG ===',
-      '',
-      ...itemLines,
-      '',
-      `Gesamt: ${fmt(total)}`,
-      '',
-      '=== KONTAKT ===',
-      `Name: ${contact.name}`,
-      `E-Mail: ${contact.email}`,
-      ...(contact.phone ? [`Telefon: ${contact.phone}`] : []),
-      ...(contact.message ? ['', 'Anmerkungen:', contact.message] : []),
-    ];
-
-    const subject = encodeURIComponent('Bestellung – JKA Berlin Shop');
-    const body = encodeURIComponent(lines.join('\n'));
-    window.location.href = `mailto:honbu@jka-berlin.de?subject=${subject}&body=${body}`;
-    setSubmitted(true);
   };
 
   const reset = () => {
     setCart([]);
-    setContact({ name: '', email: '', phone: '', message: '' });
+    setForm(EMPTY_FORM);
     setSubmitted(false);
+    setError(null);
   };
 
   return (
@@ -640,21 +615,23 @@ export default function ShopClient() {
           {/* ── Sticky cart ── */}
           <div className="w-full lg:w-[340px] shrink-0 self-start lg:sticky lg:top-24">
             <CartPanel
-                cart={cart}
-                contact={contact}
-                onRemove={(uid) => setCart((prev) => prev.filter((i) => i.uid !== uid))}
-                onQtyChange={(uid, qty) =>
-                  setCart((prev) =>
-                    prev.map((i) => (i.uid === uid ? { ...i, quantity: qty } : i))
-                  )
-                }
-                onContactChange={(field, value) =>
-                  setContact((prev) => ({ ...prev, [field]: value }))
-                }
-                onSubmit={handleSubmit}
-                submitted={submitted}
-                onReset={reset}
-              />
+              cart={cart}
+              form={form}
+              onRemove={(uid) => setCart((prev) => prev.filter((i) => i.uid !== uid))}
+              onQtyChange={(uid, qty) =>
+                setCart((prev) =>
+                  prev.map((i) => (i.uid === uid ? { ...i, quantity: qty } : i))
+                )
+              }
+              onFormChange={(field, value) =>
+                setForm((prev) => ({ ...prev, [field]: value }))
+              }
+              onSubmit={handleSubmit}
+              submitted={submitted}
+              pending={pending}
+              error={error}
+              onReset={reset}
+            />
           </div>
         </div>
       </div>

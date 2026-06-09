@@ -5,7 +5,24 @@
       "Bash(dir \"E:\\\\Next.js\\\\jka-berlin\\\\public\")",
       "Bash(npx next *)",
       "Bash(dir /b \"C:\\\\Users\\\\David\\\\Documents\\\\GitHub\\\\jka-berlin\")",
-      "Bash(npm show *)"
+      "Bash(npm show *)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(git mv *)",
+      "Bash(mkdir -p 'app/\\(site\\)/news')",
+      "Bash(mv 'app/news/[slug]' 'app/\\(site\\)/news/[slug]')",
+      "Bash(mv app/news/page.tsx 'app/\\(site\\)/news/page.tsx')",
+      "Bash(rmdir app/news)",
+      "Bash(git add *)",
+      "Bash(rm -rf .next)",
+      "Bash(echo \"cleared: $?\")",
+      "Bash(npx sanity *)",
+      "Bash(SANITY_API_TOKEN=\"skTqegWOkYdKclYwB9eSdM0ucuCRiz6AKscmCW8cGOj4ShPjD8eAMlCpQTZKcMZPTkVZgkNmg1rGqLpge\" node scripts/import-to-sanity.mjs)",
+      "Bash(node -e ' *)",
+      "Bash(SANITY_API_TOKEN=skTqegWOkYdKclYwB9eSdM0ucuCRiz6AKscmCW8cGOj4ShPjD8eAMlCpQTZKcMZPTkVZgkNmg1rGqLpge node -e ' *)",
+      "Bash(SANITY_API_TOKEN=\"skTqegWOkYdKclYwB9eSdM0ucuCRiz6AKscmCW8cGOj4ShPjD8eAMlCpQTZKcMZPTkVZgkNmg1rGqLpge\" npx sanity cors list)",
+      "Bash(curl -sS -m 8 -N -H \"Accept: text/event-stream\" \"https://wf9qza38.api.sanity.io/v2026-06-09/data/live/events/production\")",
+      "Bash(echo \"---EXIT: $?---\")"
     ]
   }
 }

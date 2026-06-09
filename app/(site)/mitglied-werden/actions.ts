@@ -2,16 +2,8 @@
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
-
-export type Mitgliedstyp = "einzel" | "verein";
-
-export type MitgliedFormState = {
-  status: "idle" | "success" | "error";
-  message: string;
-  errors?: Record<string, string>;
-  values?: Record<string, string>;
-  mitgliedstyp?: Mitgliedstyp;
-};
+import { Resend } from "resend";
+import type { Mitgliedstyp, MitgliedFormState } from "./form-state";
 
 const EINZEL_FIELDS = [
   "vorname",
@@ -166,27 +158,26 @@ async function sendViaResend(
 ): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.MITGLIED_MAIL_TO ?? "honbu@jka-berlin.de";
-  const from = process.env.MITGLIED_MAIL_FROM ?? "JKA-Berlin <noreply@jka-berlin.de>";
+  const from = process.env.MITGLIED_MAIL_FROM ?? "JKA-Berlin <onboarding@resend.dev>";
   if (!apiKey) return false;
   const { html, text, subject } = buildEmailBody(typ, data);
   try {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        from,
-        to: [to],
-        reply_to: data.email,
-        subject,
-        html,
-        text,
-      }),
+    const resend = new Resend(apiKey);
+    const { error } = await resend.emails.send({
+      from,
+      to: [to],
+      replyTo: data.email,
+      subject,
+      html,
+      text,
     });
-    return res.ok;
-  } catch {
+    if (error) {
+      console.error("[mitglied-werden] Resend error:", error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("[mitglied-werden] Resend exception:", err);
     return false;
   }
 }
@@ -253,8 +244,3 @@ export async function submitMitgliedForm(
     mitgliedstyp: typ,
   };
 }
-
-export const initialMitgliedState: MitgliedFormState = {
-  status: "idle",
-  message: "",
-};

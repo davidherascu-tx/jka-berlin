@@ -2,17 +2,14 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getNews, formatDate } from "../../lib/news";
-
-export function generateStaticParams() {
-  return getNews().map((item) => ({ slug: item.slug }));
-}
+import { PortableText } from "@portabletext/react";
+import { getNewsItem, formatDate } from "../../lib/news";
 
 export async function generateMetadata(
   props: PageProps<"/news/[slug]">
 ): Promise<Metadata> {
   const { slug } = await props.params;
-  const item = getNews().find((n) => n.slug === slug);
+  const item = await getNewsItem(slug);
   return {
     title: item?.title ?? "News",
     description: item?.excerpt,
@@ -39,9 +36,11 @@ function IconDownload() {
 
 export default async function NewsDetailPage(props: PageProps<"/news/[slug]">) {
   const { slug } = await props.params;
-  const item = getNews().find((n) => n.slug === slug);
+  const item = await getNewsItem(slug);
 
   if (!item) notFound();
+
+  const hasBody = Array.isArray(item.body) && item.body.length > 0;
 
   return (
     <article className="bg-white pt-20">
@@ -51,11 +50,11 @@ export default async function NewsDetailPage(props: PageProps<"/news/[slug]">) {
 
           {/* Image – full, uncropped */}
           <div className="w-full lg:w-[45%] shrink-0">
-            {item.image ? (
+            {item.imageUrl ? (
               <div className="rounded-xl overflow-hidden shadow-lg bg-zinc-50">
                 <Image
-                  src={item.image}
-                  alt={item.title}
+                  src={item.imageUrl}
+                  alt={item.imageAlt ?? item.title}
                   width={1200}
                   height={900}
                   priority
@@ -88,18 +87,22 @@ export default async function NewsDetailPage(props: PageProps<"/news/[slug]">) {
               {item.title}
             </h1>
 
-            {/* Excerpt / Body */}
-            <p className="text-lg text-zinc-600 leading-relaxed">
-              {item.excerpt}
-            </p>
-            <p className="mt-4 text-base text-zinc-500 leading-relaxed">
-              Der vollständige Artikel wird in Kürze ergänzt. Die News-Inhalte
-              werden später über das Sanity-CMS gepflegt und an dieser Stelle
-              ausgespielt.
-            </p>
+            {/* Excerpt */}
+            {item.excerpt && (
+              <p className="text-lg text-zinc-600 leading-relaxed">
+                {item.excerpt}
+              </p>
+            )}
+
+            {/* Body (Rich Text aus dem Studio) */}
+            {hasBody && (
+              <div className="mt-6 prose prose-zinc max-w-none prose-headings:font-black prose-headings:text-zinc-900 prose-a:text-red-600 prose-img:rounded-xl text-zinc-700 leading-relaxed space-y-4">
+                <PortableText value={item.body!} />
+              </div>
+            )}
 
             {/* PDF download */}
-            {item.pdf && (
+            {item.pdfUrl && (
               <div className="mt-8 p-4 bg-zinc-50 border border-zinc-200 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-zinc-400 mb-0.5">
@@ -108,8 +111,7 @@ export default async function NewsDetailPage(props: PageProps<"/news/[slug]">) {
                   <p className="font-bold text-zinc-900 text-sm">{item.title}</p>
                 </div>
                 <a
-                  href={`/downloads/${encodeURIComponent(item.pdf)}`}
-                  download={item.pdf}
+                  href={item.pdfUrl}
                   className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-5 py-2.5 rounded transition-colors shrink-0"
                 >
                   <IconDownload />

@@ -6,12 +6,20 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sanity:import": "node scripts/import-to-sanity.mjs",
+    "sanity:import:replace": "node scripts/import-to-sanity.mjs --replace"
   },
   "dependencies": {
+    "@sanity/image-url": "^2.1.1",
+    "@sanity/vision": "^5.30.0",
     "next": "^16.2.7",
+    "next-sanity": "^12.4.5",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "resend": "^6.12.4",
+    "sanity": "^5.30.0",
+    "styled-components": "^6.4.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

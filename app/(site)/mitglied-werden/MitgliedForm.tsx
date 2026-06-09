@@ -2,12 +2,12 @@
 
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { submitMitgliedForm } from "./actions";
 import {
   initialMitgliedState,
-  submitMitgliedForm,
   type Mitgliedstyp,
   type MitgliedFormState,
-} from "./actions";
+} from "./form-state";
 
 function SubmitButton() {
   const { pending } = useFormStatus();

@@ -1,50 +1,50 @@
-// TODO: Replace with Sanity CMS query once integrated
-// e.g.: export async function getNews(): Promise<NewsItem[]> { return sanityClient.fetch(groq`*[_type=="news"]|order(date desc)`) }
+import type { PortableTextBlock } from "@portabletext/types";
+import { defineQuery } from "next-sanity";
+import { sanityFetch } from "@/sanity/lib/live";
 
 export type NewsItem = {
   slug: string;
   title: string;
   excerpt: string;
   category: string;
-  date: string;       // ISO 8601 e.g. "2026-04-24"
-  image?: string;     // path relative to /public
-  pdf?: string;       // filename inside /public/downloads/
+  date: string; // ISO 8601 e.g. "2026-04-24"
+  imageUrl: string | null;
+  imageAlt: string | null;
+  pdfUrl: string | null;
+  body: PortableTextBlock[] | null;
 };
 
-export const news: NewsItem[] = [
-  {
-    slug: "brandenburger-sommerlager-2026",
-    title: "Brandenburger Sommerlager 2026",
-    excerpt:
-      "Auch dieses Jahr findet wieder unser beliebtes Sommerlager statt. Alle Informationen und die Anmeldung gibt es im Download-Bereich.",
-    category: "Lehrgang",
-    date: "2026-04-24",
-    image: "/2026_JKA_brandenburger_sommerlager.jpg",
-    pdf: "2026_JKA_brandenburger_sommerlager.pdf",
-  },
-  {
-    slug: "ostergrue-2026",
-    title: "Ostergrüße",
-    excerpt:
-      "Das gesamte JKA-Berlin-Team wünscht allen Mitgliedern, Freunden und Förderern frohe Ostern und erholsame Feiertage.",
-    category: "Aktuelles",
-    date: "2026-04-04",
-    image: "/pezibear-egg-1234723_1920.jpg",
-  },
-  {
-    slug: "spring-camp-mit-ohta-sensei",
-    title: "Spring Camp 2026",
-    excerpt:
-      "Ein intensives Wochenende mit Ohta Sensei – Kihon, Kata und Kumite auf höchstem Niveau im Honbu-Dojo.",
-    category: "Lehrgang",
-    date: "2026-02-16",
-    image: "/Ohta_Sensei.jpg",
-    pdf: "2026_Spring_Camp.pdf",
-  },
-];
+const NEWS_PROJECTION = /* groq */ `{
+  "slug": slug.current,
+  title,
+  excerpt,
+  category,
+  date,
+  "imageUrl": image.asset->url,
+  "imageAlt": image.alt,
+  "pdfUrl": pdf.asset->url,
+  body
+}`;
 
-export function getNews(): NewsItem[] {
-  return [...news].sort((a, b) => b.date.localeCompare(a.date));
+const NEWS_LIST_QUERY = defineQuery(
+  `*[_type == "news" && defined(slug.current)] | order(date desc) ${NEWS_PROJECTION}`
+);
+
+const NEWS_ITEM_QUERY = defineQuery(
+  `*[_type == "news" && slug.current == $slug][0] ${NEWS_PROJECTION}`
+);
+
+export async function getNews(): Promise<NewsItem[]> {
+  const { data } = await sanityFetch({ query: NEWS_LIST_QUERY });
+  return (data ?? []) as NewsItem[];
+}
+
+export async function getNewsItem(slug: string): Promise<NewsItem | null> {
+  const { data } = await sanityFetch({
+    query: NEWS_ITEM_QUERY,
+    params: { slug },
+  });
+  return (data ?? null) as NewsItem | null;
 }
 
 export function formatDate(iso: string): string {

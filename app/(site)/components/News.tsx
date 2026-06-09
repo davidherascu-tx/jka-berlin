@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { getNews, formatDate } from "../lib/news";
 
-export default function News() {
-  const items = getNews();
+export default async function News() {
+  const items = (await getNews()).slice(0, 3);
 
   return (
     <section id="news" className="relative bg-zinc-950 py-24 lg:py-32">
@@ -43,10 +43,10 @@ export default function News() {
                 href={`/news/${item.slug}`}
                 className="relative block aspect-[4/3] overflow-hidden bg-zinc-800"
               >
-                {item.image && (
+                {item.imageUrl && (
                   <Image
-                    src={item.image}
-                    alt={item.title}
+                    src={item.imageUrl}
+                    alt={item.imageAlt ?? item.title}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
                     className="object-contain transition-transform duration-700 group-hover:scale-105"

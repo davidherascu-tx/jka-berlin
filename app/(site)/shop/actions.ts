@@ -44,6 +44,14 @@ function escapeHtml(s: string): string {
     .replace(/'/g, "&#039;");
 }
 
+// Liest eine Env-Variable und entfernt versehentliche umschliessende
+// Anführungszeichen + Whitespace (haeufiger Fehler bei der Netlify-Eingabe).
+function envStr(name: string): string {
+  const v = process.env[name];
+  if (!v) return "";
+  return v.trim().replace(/^['"]+|['"]+$/g, "").trim();
+}
+
 function saveLocal(entry: Record<string, unknown>): void {
   try {
     const dir = join(process.cwd(), "data");
@@ -225,11 +233,10 @@ export async function submitOrder(payload: OrderPayload): Promise<OrderResult> {
   });
 
   const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.SHOP_MAIL_TO ?? "honbu@jka-berlin.de";
-  const from =
-    process.env.SHOP_MAIL_FROM ??
-    process.env.MITGLIED_MAIL_FROM ??
-    "JKA-Berlin <onboarding@resend.dev>";
+  let to = envStr("SHOP_MAIL_TO");
+  if (!to.includes("@")) to = "honbu@jka-berlin.de";
+  let from = envStr("SHOP_MAIL_FROM") || envStr("MITGLIED_MAIL_FROM");
+  if (!from.includes("@")) from = "JKA-Berlin <onboarding@resend.dev>";
 
   if (!apiKey) {
     console.warn(

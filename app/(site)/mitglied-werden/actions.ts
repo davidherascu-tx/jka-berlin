@@ -152,13 +152,23 @@ function buildEmailBody(
   return { html, text, subject };
 }
 
+// Liest eine Env-Variable und entfernt versehentliche umschliessende
+// Anführungszeichen + Whitespace (haeufiger Fehler bei der Netlify-Eingabe).
+function envStr(name: string): string {
+  const v = process.env[name];
+  if (!v) return "";
+  return v.trim().replace(/^['"]+|['"]+$/g, "").trim();
+}
+
 async function sendViaResend(
   typ: Mitgliedstyp,
   data: Record<string, string>
 ): Promise<{ ok: boolean; detail: string }> {
   const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.MITGLIED_MAIL_TO ?? "honbu@jka-berlin.de";
-  const from = process.env.MITGLIED_MAIL_FROM ?? "JKA-Berlin <onboarding@resend.dev>";
+  let to = envStr("MITGLIED_MAIL_TO");
+  if (!to.includes("@")) to = "honbu@jka-berlin.de";
+  let from = envStr("MITGLIED_MAIL_FROM");
+  if (!from.includes("@")) from = "JKA-Berlin <onboarding@resend.dev>";
   // TEMPORAERE Diagnose: zeigt, ob der Key zur Laufzeit ankommt (Wert wird NICHT geloggt).
   console.log(
     `[mitglied-werden] sendViaResend: RESEND_API_KEY=${
@@ -184,7 +194,7 @@ async function sendViaResend(
       const e = error as { name?: string; message?: string };
       return {
         ok: false,
-        detail: `key=present(${apiKey.length}) resendError=${e.name ?? ""}:${
+        detail: `key=present(${apiKey.length}) from="${from}" resendError=${e.name ?? ""}:${
           e.message ?? JSON.stringify(error)
         }`,
       };

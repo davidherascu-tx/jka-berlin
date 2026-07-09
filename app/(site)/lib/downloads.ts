@@ -8,6 +8,7 @@ export type DownloadItem = {
   updatedAt: string | null; // ISO date "YYYY-MM-DD"
   fileUrl: string | null;
   fileName: string | null;
+  downloadCount: number;
 };
 
 const DOWNLOADS_QUERY = defineQuery(`*[_type == "download" && defined(file.asset)] | order(updatedAt desc) {
@@ -16,7 +17,8 @@ const DOWNLOADS_QUERY = defineQuery(`*[_type == "download" && defined(file.asset
   "category": coalesce(category, ""),
   updatedAt,
   "fileUrl": file.asset->url,
-  "fileName": file.asset->originalFilename
+  "fileName": file.asset->originalFilename,
+  "downloadCount": coalesce(downloadCount, 0)
 }`);
 
 export async function getDownloads(): Promise<DownloadItem[]> {

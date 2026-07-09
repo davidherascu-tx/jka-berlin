@@ -30,6 +30,7 @@ export default async function DownloadsPage() {
         : "",
       fileUrl: d.fileUrl as string,
       fileName: d.fileName ?? d.title,
+      downloadCount: d.downloadCount,
     }));
 
   return (

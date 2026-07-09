@@ -47,6 +47,14 @@ export const downloadType = defineType({
       type: 'text',
       rows: 2,
     }),
+    defineField({
+      name: 'downloadCount',
+      title: 'Downloads (Zähler)',
+      description: 'Wird automatisch von der Website hochgezählt, nicht manuell bearbeiten.',
+      type: 'number',
+      readOnly: true,
+      initialValue: 0,
+    }),
   ],
   orderings: [
     {

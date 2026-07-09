@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 export interface TerminEvent {
+  id: string;
   title: string;
   startDate: string;
   endDate?: string;
@@ -116,6 +117,15 @@ function eventsOnDay(
   });
 }
 
+function IconCalendarAdd() {
+  return (
+    <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+      <path fillRule="evenodd" d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75z" clipRule="evenodd" />
+      <path d="M10 9a.75.75 0 01.75.75v1.5h1.5a.75.75 0 010 1.5h-1.5v1.5a.75.75 0 01-1.5 0v-1.5h-1.5a.75.75 0 010-1.5h1.5v-1.5A.75.75 0 0110 9z" />
+    </svg>
+  );
+}
+
 /* ── Expanded Detail ───────────────────────────────── */
 
 function EventDetail({ event }: { event: TerminEvent }) {
@@ -172,6 +182,16 @@ function EventDetail({ event }: { event: TerminEvent }) {
             )}
           </div>
         </div>
+      </div>
+
+      <div className="px-4 sm:px-5 pb-4 sm:pb-5">
+        <a
+          href={`/api/termine/${event.id}/ics`}
+          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded border border-zinc-300 text-zinc-900 hover:border-zinc-900 hover:bg-zinc-900 hover:text-white transition-colors"
+        >
+          <IconCalendarAdd />
+          Zum Kalender hinzufügen
+        </a>
       </div>
     </div>
   );
@@ -382,29 +402,39 @@ export default function TermineView({ events }: { events: TerminEvent[] }) {
           </span>
         </div>
 
-        <div className="flex bg-zinc-100 rounded-lg p-1">
-          <button
-            onClick={() => setView("list")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md transition-colors ${
-              view === "list" ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-500 hover:text-zinc-700"
-            }`}
+        <div className="flex items-center gap-3">
+          <a
+            href="/api/termine/ics"
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded border border-zinc-300 text-zinc-900 hover:border-zinc-900 hover:bg-zinc-900 hover:text-white transition-colors"
           >
-            <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M2 4h12v1H2zm0 3.5h12v1H2zm0 3.5h12v1H2z" />
-            </svg>
-            Liste
-          </button>
-          <button
-            onClick={() => setView("calendar")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md transition-colors ${
-              view === "calendar" ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-500 hover:text-zinc-700"
-            }`}
-          >
-            <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M4 0v1H1.5A1.5 1.5 0 000 2.5v12A1.5 1.5 0 001.5 16h13a1.5 1.5 0 001.5-1.5v-12A1.5 1.5 0 0014.5 1H12V0h-1v1H5V0zm10.5 2a.5.5 0 01.5.5V4H1V2.5a.5.5 0 01.5-.5zM1 5h14v9.5a.5.5 0 01-.5.5h-13a.5.5 0 01-.5-.5z" />
-            </svg>
-            Kalender
-          </button>
+            <IconCalendarAdd />
+            Alle Termine abonnieren
+          </a>
+
+          <div className="flex bg-zinc-100 rounded-lg p-1">
+            <button
+              onClick={() => setView("list")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md transition-colors ${
+                view === "list" ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-500 hover:text-zinc-700"
+              }`}
+            >
+              <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M2 4h12v1H2zm0 3.5h12v1H2zm0 3.5h12v1H2z" />
+              </svg>
+              Liste
+            </button>
+            <button
+              onClick={() => setView("calendar")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md transition-colors ${
+                view === "calendar" ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-500 hover:text-zinc-700"
+              }`}
+            >
+              <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M4 0v1H1.5A1.5 1.5 0 000 2.5v12A1.5 1.5 0 001.5 16h13a1.5 1.5 0 001.5-1.5v-12A1.5 1.5 0 0014.5 1H12V0h-1v1H5V0zm10.5 2a.5.5 0 01.5.5V4H1V2.5a.5.5 0 01.5-.5zM1 5h14v9.5a.5.5 0 01-.5.5h-13a.5.5 0 01-.5-.5z" />
+              </svg>
+              Kalender
+            </button>
+          </div>
         </div>
       </div>
 

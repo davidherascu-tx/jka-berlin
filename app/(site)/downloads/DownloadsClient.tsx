@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -13,6 +13,7 @@ export type DownloadEntry = {
   updatedAt: string;
   fileUrl: string;
   fileName: string;
+  downloadCount: number;
 };
 
 type VideoEntry = {
@@ -137,15 +138,10 @@ function Spinner() {
 
 export default function DownloadsClient({ downloads }: { downloads: DownloadEntry[] }) {
   const [filter, setFilter] = useState<FilterKey>('Alle');
-  const [counts, setCounts] = useState<Record<string, number>>({});
+  const [counts, setCounts] = useState<Record<string, number>>(() =>
+    Object.fromEntries(downloads.map((d) => [d.id, d.downloadCount]))
+  );
   const [loading, setLoading] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch('/api/download')
-      .then((r) => r.json())
-      .then((data: Record<string, number>) => setCounts(data))
-      .catch(() => {});
-  }, []);
 
   const getCount = (id: string) => counts[id] ?? 0;
 

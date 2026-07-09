@@ -394,7 +394,7 @@ export default function TermineView({ events }: { events: TerminEvent[] }) {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
         <div className="flex items-center gap-3">
           <span className="h-[2px] w-12 bg-red-600" />
           <span className="text-red-600 text-xs font-bold tracking-[0.4em] uppercase">
@@ -405,10 +405,11 @@ export default function TermineView({ events }: { events: TerminEvent[] }) {
         <div className="flex items-center gap-3">
           <a
             href="/api/termine/ics"
-            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded border border-zinc-300 text-zinc-900 hover:border-zinc-900 hover:bg-zinc-900 hover:text-white transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded border border-zinc-300 text-zinc-900 hover:border-zinc-900 hover:bg-zinc-900 hover:text-white transition-colors"
           >
             <IconCalendarAdd />
-            Alle Termine abonnieren
+            <span className="sm:hidden">Abonnieren</span>
+            <span className="hidden sm:inline">Alle Termine abonnieren</span>
           </a>
 
           <div className="flex bg-zinc-100 rounded-lg p-1">

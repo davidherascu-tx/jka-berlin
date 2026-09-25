@@ -3,6 +3,7 @@ import PageHero from "../components/PageHero";
 import ShopClient from "./ShopClient";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/shop" },
   title: "Shop",
   description:
     "JKA-Berlin Vereinsbekleidung: Trainingsanzug, Hoodie, T-Shirts, Sporttasche und Base Caps.",

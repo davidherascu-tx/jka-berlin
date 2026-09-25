@@ -3,6 +3,7 @@ import PageHero from "../components/PageHero";
 import MitgliedForm from "./MitgliedForm";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/mitglied-werden" },
   title: "Jetzt Mitglied werden",
   description:
     "Werde Mitglied bei JKA-Berlin – Training nach JKA-Standards, internationale Lizenzen und Danprüfungen unter Leitung von Senseis aus dem JKA Headquarters.",

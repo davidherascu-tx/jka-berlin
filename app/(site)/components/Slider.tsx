@@ -71,6 +71,10 @@ export default function Slider() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
+      {/* Genau eine H1 pro Seite (SEO) – die Slide-Titel sind H2. */}
+      <h1 className="sr-only">
+        JKA Berlin – Shotokan-Karate im Honbu-Dojo „Leiden-kan” in Berlin-Pankow
+      </h1>
       {slides.map((slide, i) => (
         <div
           key={slide.src}
@@ -108,9 +112,9 @@ export default function Slider() {
                   {slide.subtitle}
                 </span>
               </div>
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] tracking-tight">
+              <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] tracking-tight">
                 {slide.title}
-              </h1>
+              </h2>
               {slide.caption && (
                 <p className="mt-6 text-lg sm:text-xl text-white/80 max-w-xl">
                   {slide.caption}

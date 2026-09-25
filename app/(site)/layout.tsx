@@ -3,6 +3,12 @@ import { Oswald, Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import {
+  DEFAULT_OG_IMAGE,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+} from "./lib/site";
 
 const oswald = Oswald({
   variable: "--font-display",
@@ -16,12 +22,41 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "JKA Berlin · Honbu-Dojo „Leiden-kan”",
+    default: "JKA Berlin · Shotokan Karate im Honbu-Dojo „Leiden-kan”",
     template: "%s · JKA Berlin",
   },
-  description:
-    "Shotokan-Karate der Japan Karate Association im Honbu-Dojo „Leiden-kan” in Berlin. Training, Lehrgänge und News.",
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  keywords: [
+    "Karate Berlin",
+    "Shotokan Karate",
+    "JKA",
+    "Japan Karate Association",
+    "Karate Pankow",
+    "Karateverein Berlin",
+    "Honbu-Dojo Leiden-kan",
+  ],
+  openGraph: {
+    type: "website",
+    locale: "de_DE",
+    siteName: SITE_NAME,
+    images: [DEFAULT_OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [DEFAULT_OG_IMAGE.url],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
+  // Google Search Console (HTML-Tag-Methode): Code als Env-Variable setzen.
+  verification: process.env.GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+    : undefined,
 };
 
 export default function RootLayout({

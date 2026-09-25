@@ -5,6 +5,7 @@ import type { DownloadEntry } from "./DownloadsClient";
 import { getDownloads } from "../lib/downloads";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/downloads" },
   title: "Downloads",
   description:
     "Formulare, Anmeldungen und technische Unterlagen der JKA Berlin zum Herunterladen.",

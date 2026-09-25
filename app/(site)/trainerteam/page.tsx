@@ -3,6 +3,7 @@ import Image from "next/image";
 import PageHero from "../components/PageHero";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/trainerteam" },
   title: "Trainerteam",
   description:
     "Unser Trainerteam im Honbu-Dojo Leiden-kan - erfahrene Karate-Lehrer der JKA Berlin.",

@@ -4,15 +4,45 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PortableText } from "@portabletext/react";
 import { getNewsItem, formatDate } from "../../lib/news";
+import {
+  DEFAULT_OG_IMAGE,
+  ORGANIZATION_JSON_LD,
+  SITE_NAME,
+  SITE_URL,
+  jsonLd,
+} from "../../lib/site";
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await props.params;
   const item = await getNewsItem(slug);
+  if (!item) return { title: "News" };
+
+  const url = `/news/${item.slug}`;
   return {
-    title: item?.title ?? "News",
-    description: item?.excerpt,
+    title: item.title,
+    description: item.excerpt,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      url,
+      title: item.title,
+      description: item.excerpt,
+      locale: "de_DE",
+      siteName: SITE_NAME,
+      publishedTime: item.date,
+      section: item.category,
+      images: item.imageUrl
+        ? [{ url: item.imageUrl, alt: item.imageAlt ?? item.title }]
+        : [DEFAULT_OG_IMAGE],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: item.title,
+      description: item.excerpt,
+      images: [item.imageUrl ?? DEFAULT_OG_IMAGE.url],
+    },
   };
 }
 
@@ -44,9 +74,28 @@ export default async function NewsDetailPage(props: {
 
   const hasBody = Array.isArray(item.body) && item.body.length > 0;
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: item.title,
+    description: item.excerpt,
+    datePublished: item.date,
+    image: [item.imageUrl ?? `${SITE_URL}${DEFAULT_OG_IMAGE.url}`],
+    mainEntityOfPage: `${SITE_URL}/news/${item.slug}`,
+    author: { "@id": ORGANIZATION_JSON_LD["@id"], "@type": "Organization", name: ORGANIZATION_JSON_LD.name },
+    publisher: {
+      "@type": "Organization",
+      name: ORGANIZATION_JSON_LD.name,
+      logo: { "@type": "ImageObject", url: ORGANIZATION_JSON_LD.logo },
+    },
+  };
+
   return (
     <article className="bg-white pt-20">
-      <div className="mx-auto max-w-6xl px-6 lg:px-10 py-16 lg:py-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd(articleJsonLd) }}
+      />      <div className="mx-auto max-w-6xl px-6 lg:px-10 py-16 lg:py-24">
         {/* ── Two-column layout: image left, content right ── */}
         <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 items-start">
 
@@ -79,7 +128,7 @@ export default async function NewsDetailPage(props: {
               <span className="bg-red-600 text-white text-[10px] font-bold tracking-widest uppercase px-2.5 py-1">
                 {item.category}
               </span>
-              <time className="text-sm text-zinc-500 tracking-wide">
+              <time dateTime={item.date} className="text-sm text-zinc-500 tracking-wide">
                 {formatDate(item.date)}
               </time>
             </div>

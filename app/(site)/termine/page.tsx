@@ -5,6 +5,7 @@ import TermineView from "../components/TermineView";
 import { getTermine } from "../lib/termine";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/termine" },
   title: "Termine",
   description:
     "Termine, Turniere und Veranstaltungen der JKA Berlin im Überblick.",

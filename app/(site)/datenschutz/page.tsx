@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import PageHero from "../components/PageHero";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/datenschutz" },
   title: "Datenschutz",
   description: "Datenschutzerklärung der JKA Berlin e.V.",
 };

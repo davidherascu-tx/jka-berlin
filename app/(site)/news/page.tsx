@@ -5,6 +5,7 @@ import PageHero from "../components/PageHero";
 import { getNews, formatDate } from "../lib/news";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/news" },
   title: "News",
   description: "Aktuelles, Lehrgänge und Neuigkeiten aus der JKA Berlin.",
 };

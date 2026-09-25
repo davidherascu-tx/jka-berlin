@@ -4,6 +4,7 @@ import PageHero from "../components/PageHero";
 import DojoKunAudio from "../components/DojoKunAudio";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/ueber-uns" },
   title: "Über uns",
   description:
     "JKA-Berlin – einer der drei von der JKA anerkannten Karate-Verbände in Deutschland. Geschichte, Philosophie und Karate-Do.",

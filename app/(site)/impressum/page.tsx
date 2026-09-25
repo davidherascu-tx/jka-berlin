@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import PageHero from "../components/PageHero";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/impressum" },
   title: "Impressum",
   description: "Impressum und rechtliche Angaben der JKA Berlin e.V.",
 };
